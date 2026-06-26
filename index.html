@@ -222,6 +222,32 @@ tbody tr:hover{background:#f9fafb;}
 .dd-menu a.red{color:#dc2626;}
 .dd-menu a.red:hover{background:#fef2f2;}
 
+/* MODAL ATUALIZAÇÃO */
+.upd-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:7px;color:rgba(255,255,255,.8);font-size:12px;cursor:pointer;transition:all .2s;}
+.upd-btn:hover{background:rgba(255,255,255,.2);color:#fff;}
+.upd-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
+.upd-dot.checking{background:#f59e0b;animation:spin 1s linear infinite;}
+.upd-dot.available{background:#3b82f6;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.upd-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center;}
+.upd-modal.open{display:flex;}
+.upd-box{background:#fff;border-radius:14px;padding:32px;width:420px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.upd-box h3{font-size:17px;font-weight:700;color:#111;margin-bottom:8px;}
+.upd-box p{font-size:13px;color:#6b7280;margin-bottom:20px;line-height:1.6;}
+.upd-version{display:flex;align-items:center;justify-content:space-between;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin-bottom:16px;}
+.upd-version-label{font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;}
+.upd-version-val{font-size:15px;font-weight:700;color:#1e3a8a;}
+.upd-status-ok{display:flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#16a34a;font-weight:500;}
+.upd-status-new{display:flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#1d4ed8;font-weight:500;}
+.upd-notes{background:#f9fafb;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#6b7280;line-height:1.8;}
+.upd-notes strong{color:#374151;display:block;margin-bottom:6px;font-size:13px;}
+.upd-btns{display:flex;gap:8px;justify-content:flex-end;}
+.upd-btns button{padding:9px 20px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;}
+.btn-upd-cancel{border:1px solid #d1d5db;background:#fff;color:#374151;}
+.btn-upd-go{border:none;background:#1e3a8a;color:#fff;}
+.btn-upd-go:hover{background:#1e40af;}
+
 #toast{position:fixed;bottom:24px;right:24px;background:#1e2a3a;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;display:none;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.2);}
 </style>
 </head>
@@ -310,6 +336,12 @@ tbody tr:hover{background:#f9fafb;}
       <div class="su-av" id="uAv">?</div>
       <div class="su-info"><strong id="uNome">-</strong><small id="uRole">-</small></div>
       <button class="btn-out" onclick="doLogout()" title="Sair">&#9211;</button>
+    </div>
+    <div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.08)">
+      <button class="upd-btn" onclick="abrirUpd()" style="width:100%">
+        <div class="upd-dot" id="updDot"></div>
+        <span id="updBtnText">Verificar atualizações</span>
+      </button>
     </div>
     <div class="ss">
       <div class="ss-t">Cadastros</div>
@@ -701,6 +733,36 @@ tbody tr:hover{background:#f9fafb;}
 </div>
 <div id="toast"></div>
 
+<!-- MODAL ATUALIZAÇÃO -->
+<div class="upd-modal" id="updModal">
+  <div class="upd-box">
+    <h3 id="updTitle">Verificando atualizações...</h3>
+    <p id="updDesc">Aguarde enquanto verificamos se há uma versão mais recente do NexusTech.</p>
+    <div class="upd-version">
+      <div>
+        <div class="upd-version-label">Versão atual</div>
+        <div class="upd-version-val" id="updVerAtual">-</div>
+      </div>
+      <div style="text-align:right">
+        <div class="upd-version-label">Última versão</div>
+        <div class="upd-version-val" id="updVerNova" style="color:#16a34a">-</div>
+      </div>
+    </div>
+    <div id="updStatus"></div>
+    <div id="updNotes" style="display:none">
+      <div class="upd-notes">
+        <strong>📋 O que há de novo:</strong>
+        <span id="updNotesList"></span>
+      </div>
+    </div>
+    <div class="upd-btns">
+      <button class="btn-upd-cancel" onclick="fecharUpd()">Fechar</button>
+      <button class="btn-upd-go" id="updBtnIr" onclick="irParaGithub()" style="display:none">↓ Baixar atualização</button>
+    </div>
+    <div style="font-size:11px;color:#d1d5db;text-align:center;margin-top:12px" id="updFooter"></div>
+  </div>
+</div>
+
 <script>
 // ===== ESTADO =====
 var usuarios = [{nome:'Administrador',login:'admin',senha:'admin123',role:'Admin'}];
@@ -790,6 +852,7 @@ function iniciarApp(u){
   // Restaurar página anterior
   var pag=localStorage.getItem('sf_pagina')||'lista';
   nav(pag);
+  setTimeout(verificarUpdAuto, 2000);
 }
 function doLogout() {
   usuAtual=null;
@@ -1781,6 +1844,85 @@ function importarExcel(event){
   };
   reader.readAsArrayBuffer(file);
   event.target.value='';
+}
+
+// ===== ATUALIZAÇÕES =====
+var VERSAO_ATUAL = '2026.06.27.1';
+var GITHUB_URL = 'https://raw.githubusercontent.com/fsdsi/nexustech/main/version.json';
+var GITHUB_DOWNLOAD = 'https://github.com/fsdsi/nexustech/raw/main/index.html';
+
+function abrirUpd(){
+  document.getElementById('updModal').classList.add('open');
+  document.getElementById('updVerAtual').textContent = VERSAO_ATUAL;
+  document.getElementById('updVerNova').textContent = '...';
+  document.getElementById('updTitle').textContent = 'Verificando atualizações...';
+  document.getElementById('updDesc').textContent = 'Consultando o servidor para verificar se há uma versão mais recente.';
+  document.getElementById('updStatus').innerHTML = '<div style="text-align:center;padding:12px;color:#9ca3af;font-size:13px">&#8987; Verificando...</div>';
+  document.getElementById('updNotes').style.display = 'none';
+  document.getElementById('updBtnIr').style.display = 'none';
+  document.getElementById('updFooter').textContent = '';
+  var dot = document.getElementById('updDot');
+  dot.className = 'upd-dot checking';
+
+  // Buscar version.json do GitHub
+  fetch(GITHUB_URL + '?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var verNova = data.versao || VERSAO_ATUAL;
+      document.getElementById('updVerNova').textContent = verNova;
+      document.getElementById('updFooter').textContent = 'Última verificação: ' + new Date().toLocaleString('pt-BR');
+
+      if(verNova > VERSAO_ATUAL){
+        // Tem atualização!
+        dot.className = 'upd-dot available';
+        document.getElementById('updBtnText').textContent = 'Nova versão disponível!';
+        document.getElementById('updTitle').textContent = '🆕 Nova versão disponível!';
+        document.getElementById('updDesc').textContent = 'Uma versão mais recente do NexusTech está disponível. Baixe e substitua o arquivo no GitHub.';
+        document.getElementById('updStatus').innerHTML = '<div class="upd-status-new">&#128640; Versão '+verNova+' disponível para download!</div>';
+        if(data.notas && data.notas.length){
+          document.getElementById('updNotes').style.display = 'block';
+          document.getElementById('updNotesList').innerHTML = data.notas.map(function(n){return '• '+n;}).join('<br>');
+        }
+        document.getElementById('updBtnIr').style.display = 'inline-block';
+      } else {
+        // Já está atualizado
+        dot.className = 'upd-dot';
+        document.getElementById('updBtnText').textContent = 'Verificar atualizações';
+        document.getElementById('updTitle').textContent = '✅ Sistema atualizado!';
+        document.getElementById('updDesc').textContent = 'Você está usando a versão mais recente do NexusTech.';
+        document.getElementById('updStatus').innerHTML = '<div class="upd-status-ok">&#10003; Versão '+VERSAO_ATUAL+' — Você está atualizado!</div>';
+      }
+    })
+    .catch(function(){
+      dot.className = 'upd-dot';
+      document.getElementById('updTitle').textContent = 'Sem conexão';
+      document.getElementById('updDesc').textContent = 'Não foi possível verificar atualizações. Verifique sua conexão com a internet.';
+      document.getElementById('updStatus').innerHTML = '<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;font-size:13px;color:#dc2626">&#10005; Não foi possível conectar ao servidor.</div>';
+      document.getElementById('updVerNova').textContent = '?';
+    });
+}
+
+function fecharUpd(){
+  document.getElementById('updModal').classList.remove('open');
+}
+
+function irParaGithub(){
+  window.open(GITHUB_DOWNLOAD, '_blank');
+  fecharUpd();
+}
+
+// Verificar automaticamente ao logar
+function verificarUpdAuto(){
+  fetch(GITHUB_URL + '?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var verNova = data.versao || VERSAO_ATUAL;
+      if(verNova > VERSAO_ATUAL){
+        document.getElementById('updDot').className = 'upd-dot available';
+        document.getElementById('updBtnText').textContent = '🆕 Nova versão disponível!';
+      }
+    })
+    .catch(function(){});
 }
 
 // ===== INIT =====
