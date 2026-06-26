@@ -1,0 +1,1952 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>NexusTech — Sistema de Gestão</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f3f4f6;}
+
+/* LOGIN */
+.login-screen{display:none;align-items:stretch;height:100vh;background:#fff;}
+
+.login-card h1{font-size:24px;font-weight:700;color:#1e2a3a;text-align:center;}
+.login-card p{font-size:13px;color:#6b7280;text-align:center;margin:4px 0 24px;}
+.lf{margin-bottom:14px;}
+.lf label{display:block;font-size:12px;font-weight:500;color:#374151;margin-bottom:5px;}
+.lf input{width:100%;height:40px;border:1px solid #d1d5db;border-radius:8px;padding:0 12px;font-size:14px;outline:none;font-family:inherit;}
+.lf input:focus{border-color:#2563eb;}
+.login-btn{width:100%;height:42px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:6px;}
+.login-btn:hover{background:#1d4ed8;}
+.login-err{color:#dc2626;font-size:12px;text-align:center;margin-top:8px;display:none;}
+
+/* MODAL */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal-box{background:#fff;border-radius:12px;padding:28px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.modal-box h3{font-size:15px;font-weight:600;color:#111;margin-bottom:6px;}
+.modal-box p{font-size:13px;color:#6b7280;margin-bottom:16px;}
+.modal-box input{width:100%;height:38px;border:1px solid #d1d5db;border-radius:7px;padding:0 12px;font-size:14px;outline:none;font-family:inherit;margin-bottom:8px;}
+.modal-box input:focus{border-color:#2563eb;}
+.modal-err{color:#dc2626;font-size:12px;margin-bottom:8px;display:none;}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;}
+.modal-btns button{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;}
+.mc{border:1px solid #d1d5db;background:#fff;color:#374151;}
+.mok{border:none;background:#2563eb;color:#fff;}
+
+/* APP */
+.app{display:none;height:100vh;overflow:hidden;}
+.app.on{display:flex;}
+.sidebar{width:230px;min-width:230px;background:#1e2a3a;display:flex;flex-direction:column;overflow-y:auto;}
+.sl{padding:18px 16px 10px;border-bottom:1px solid rgba(255,255,255,.08);}
+.sl span{color:#fff;font-size:16px;font-weight:700;}
+.sl small{display:block;color:rgba(255,255,255,.4);font-size:11px;margin-top:2px;}
+.su{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:8px;}
+.su-av{width:30px;height:30px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0;}
+.su-info{flex:1;min-width:0;}
+.su-info strong{display:block;color:#fff;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.su-info small{color:rgba(255,255,255,.4);font-size:11px;}
+.btn-out{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:18px;flex-shrink:0;}
+.btn-out:hover{color:#ef4444;}
+.ss{padding:10px 0 4px;}
+.ss-t{padding:6px 14px 4px;font-size:10px;font-weight:600;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px;}
+.si{display:flex;align-items:center;gap:8px;padding:8px 14px;font-size:13px;color:rgba(255,255,255,.65);cursor:pointer;border-left:2px solid transparent;transition:background .15s;}
+.si:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.9);}
+.si.active{background:rgba(59,130,246,.2);color:#60a5fa;border-left-color:#3b82f6;}
+.si svg{width:16px;height:16px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.8;}
+.si.sub{padding-left:36px;font-size:12px;}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:50px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;padding:0 20px;flex-shrink:0;}
+.bc{font-size:12px;color:#6b7280;}
+.bc span{color:#2563eb;}
+.content{flex:1;overflow-y:auto;padding:20px 40px;}
+.page{display:none;}
+.page.active{display:block;}
+
+/* CADASTROS */
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:960px;}
+.cc{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;}
+.cc-h{background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+.cc-h h3{font-size:13px;font-weight:600;color:#111;}
+.cc-b{padding:14px 16px;}
+.ci-row{display:flex;gap:6px;margin-bottom:8px;}
+.ci-row input,.ci-row select{flex:1;height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;font-family:inherit;color:#111;background:#fff;}
+.ci-row input:focus{border-color:#2563eb;}
+.btn-ca{height:34px;padding:0 12px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:18px;cursor:pointer;flex-shrink:0;}
+.cl{max-height:160px;overflow-y:auto;}
+.cit{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border-radius:6px;font-size:13px;color:#374151;}
+.cit:hover{background:#f9fafb;}
+.cit-s{font-size:11px;color:#9ca3af;margin-left:6px;}
+.brm{background:none;border:none;color:#d1d5db;cursor:pointer;font-size:16px;padding:0 4px;}
+.brm:hover{color:#dc2626;}
+.ce{padding:16px;text-align:center;color:#9ca3af;font-size:12px;}
+
+/* FORM PRODUTO */
+.fc{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;max-width:900px;}
+.fc-h{background:#2563eb;padding:12px 20px;text-align:center;}
+.fc-h h2{color:#fff;font-size:14px;font-weight:500;}
+.fb{padding:18px 22px;display:grid;gap:10px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fg label{font-size:11px;color:#6b7280;font-weight:500;}
+.fi{display:flex;align-items:center;gap:8px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;height:36px;background:#fff;font-size:13px;}
+.fi:focus-within{border-color:#2563eb;}
+.fi svg{width:15px;height:15px;stroke:#9ca3af;fill:none;stroke-width:1.8;flex-shrink:0;}
+.fi input,.fi select{border:none;outline:none;flex:1;background:transparent;font-size:13px;color:#111;font-family:inherit;width:100%;}
+.fi.dis{background:#f9fafb;}
+.fi.dis input{color:#6b7280;}
+.ab{font-size:11px;background:#eff6ff;color:#2563eb;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.ib{font-size:11px;background:#f0fdf4;color:#16a34a;padding:2px 8px;border-radius:99px;white-space:nowrap;flex-shrink:0;}
+.sep{border-top:1px solid #e5e7eb;padding-top:12px;margin-top:4px;}
+.sep-l{font-size:11px;font-weight:600;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;}
+.din-r{display:flex;gap:6px;margin-bottom:8px;}
+.din-r input,.din-r select{flex:1;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;height:36px;font-size:13px;background:#fff;color:#111;font-family:inherit;outline:none;}
+.din-r input:focus,.din-r select:focus{border-color:#2563eb;}
+.btn-add{height:36px;padding:0 13px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:20px;cursor:pointer;flex-shrink:0;}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.tag{background:#f3f4f6;border:1px solid #e5e7eb;border-radius:99px;padding:4px 11px;font-size:12px;color:#374151;display:flex;align-items:center;gap:5px;}
+.tag .ty{color:#9ca3af;font-size:11px;}
+.tag .rm{cursor:pointer;color:#9ca3af;font-size:14px;line-height:1;}
+.tag .rm:hover{color:#dc2626;}
+.btn-row{display:flex;justify-content:flex-end;gap:8px;padding:14px 22px;border-top:1px solid #e5e7eb;background:#f9fafb;}
+.btn{padding:8px 18px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;border:1px solid #d1d5db;background:#fff;color:#374151;}
+.btn:hover{background:#f3f4f6;}
+.btn-p{background:#2563eb;color:#fff;border-color:#2563eb;}
+.btn-p:hover{background:#1d4ed8;}
+
+/* TABELAS */
+.tc{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-top:14px;}
+.th{padding:11px 16px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;font-size:13px;font-weight:600;color:#111;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{padding:9px 14px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;border-bottom:1px solid #e5e7eb;background:#f9fafb;white-space:nowrap;}
+tbody td{padding:9px 14px;border-bottom:1px solid #f3f4f6;color:#111;vertical-align:middle;}
+tbody tr:hover{background:#f9fafb;}
+
+/* LISTA PRODUTOS */
+.lfc{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px;}
+.lfc h2{font-size:15px;font-weight:600;color:#111;margin-bottom:16px;}
+.lg3{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.lg2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.lfg{display:flex;flex-direction:column;gap:5px;}
+.lfg label{font-size:12px;font-weight:500;color:#374151;}
+.lfg input,.lfg select{height:36px;border:1px solid #d1d5db;border-radius:7px;padding:0 10px;font-size:13px;color:#111;background:#fff;outline:none;font-family:inherit;}
+.lfg input:focus{border-color:#2563eb;}
+.vbox{border:1px dashed #d1d5db;border-radius:8px;padding:14px;margin:10px 0;background:#fafafa;}
+.vgrid{display:grid;grid-template-columns:180px 1fr;gap:12px;}
+.btn-esc{height:32px;padding:0 14px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:12px;cursor:pointer;margin:8px 0;}
+.btn-buscar{height:38px;padding:0 22px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;}
+.btn-np{height:36px;padding:0 14px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;}
+.ba{display:inline-block;background:#16a34a;color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:5px;}
+.bi{display:inline-block;background:#dc2626;color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:5px;}
+.be{display:inline-block;background:#2563eb;color:#fff;font-size:11px;font-weight:600;padding:3px 8px;border-radius:5px;}
+.btn-ed{padding:4px 10px;background:#f59e0b;color:#fff;border:none;border-radius:5px;font-size:12px;cursor:pointer;margin-right:4px;}
+.btn-in{padding:4px 10px;background:#ef4444;color:#fff;border:none;border-radius:5px;font-size:12px;cursor:pointer;}
+.btn-at{padding:4px 10px;background:#16a34a;color:#fff;border:none;border-radius:5px;font-size:12px;cursor:pointer;}
+.qtd{display:inline-block;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:6px;padding:3px 10px;font-size:13px;font-weight:600;min-width:36px;text-align:center;}
+.vcl{font-weight:600;color:#16a34a;}
+.cod-link{color:#2563eb;cursor:pointer;font-weight:600;text-decoration:underline;}
+.cor-tag{display:inline-block;background:#fef9c3;border:1px solid #fde047;border-radius:99px;padding:1px 8px;font-size:11px;color:#713f12;margin-left:6px;}
+
+/* ROMANEIO */
+.fcard{background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:16px 18px;margin-bottom:14px;}
+.frow{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.fsel{height:36px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;color:#111;background:#fff;min-width:160px;outline:none;}
+.finp{height:36px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;color:#111;background:#fff;flex:1;outline:none;}
+.btn-ex{height:36px;padding:0 18px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;cursor:pointer;}
+.tcon{padding:8px 16px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#6b7280;}
+.tcon select{height:26px;border:1px solid #e5e7eb;border-radius:5px;font-size:12px;padding:0 4px;background:#fff;}
+.tcon input{height:26px;border:1px solid #e5e7eb;border-radius:5px;font-size:12px;padding:0 8px;width:150px;outline:none;}
+.bag{color:#dc2626;font-size:12px;font-weight:500;}
+.bent{color:#16a34a;font-size:12px;font-weight:500;}
+.btn-al{padding:4px 10px;background:#16a34a;color:#fff;border:none;border-radius:5px;font-size:12px;cursor:pointer;}
+
+/* FICHA */
+.ficha-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding:20px;}
+.ficha-campo{border-bottom:1px solid #f3f4f6;padding-bottom:10px;}
+.ficha-campo-label{font-size:10px;font-weight:600;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;}
+.ficha-campo-val{font-size:13px;font-weight:500;color:#111;}
+
+/* RECEBIMENTOS */
+.rec-section{background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:16px;}
+.rec-sec-h{background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;}
+.rec-sec-h h3{font-size:14px;font-weight:600;color:#111;display:flex;align-items:center;gap:8px;}
+.rec-sec-b{padding:18px;}
+.rec-form-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.rec-fg{display:flex;flex-direction:column;gap:4px;}
+.rec-fg label{font-size:11px;font-weight:600;color:#374151;}
+.rec-fg input,.rec-fg select,.rec-fg textarea{border:1px solid #d1d5db;border-radius:7px;padding:0 10px;height:36px;font-size:13px;color:#111;background:#fff;outline:none;font-family:inherit;width:100%;}
+.rec-fg input:focus,.rec-fg select:focus{border-color:#2563eb;}
+.rec-fg textarea{height:60px;padding:8px 10px;resize:none;}
+.rec-fg input[readonly]{background:#f9fafb;color:#6b7280;}
+.btn-lancar{height:38px;padding:0 24px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;margin-top:8px;}
+.btn-lancar:hover{background:#1d4ed8;}
+.rec-filtros{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.rec-filtros select,.rec-filtros input{height:34px;border:1px solid #d1d5db;border-radius:7px;padding:0 10px;font-size:13px;color:#111;background:#fff;outline:none;font-family:inherit;}
+.rec-filtros input{width:240px;}
+.dias-pos{color:#16a34a;font-weight:600;}
+.dias-neg{color:#dc2626;font-weight:600;}
+.dias-zero{color:#6b7280;}
+.st-ok{display:inline-block;background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;}
+.st-pend{display:inline-block;background:#fef9c3;color:#ca8a04;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;}
+.st-div{display:inline-block;background:#fee2e2;color:#dc2626;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;}
+/* DASHBOARD */
+.dash-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.dash-card{background:#1e3a5f;border-radius:10px;padding:16px 20px;color:#fff;}
+.dash-card-label{font-size:11px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.dash-card-val{font-size:26px;font-weight:700;color:#fff;}
+.dash-charts{display:grid;grid-template-columns:1fr;gap:16px;margin-bottom:16px;}
+.dash-chart-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.dash-box{background:#1e2a3a;border-radius:10px;padding:16px;}
+.dash-box h4{font-size:12px;font-weight:600;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;text-align:center;}
+.bar-wrap{display:flex;align-items:flex-end;width:100%;box-sizing:border-box;}
+.bar-col{display:flex;flex-direction:column;align-items:center;flex:1;min-width:0;}
+.bar-body{background:#3b82f6;border-radius:3px 3px 0 0;width:100%;min-height:2px;}
+.bar-label{font-size:9px;color:rgba(255,255,255,.5);margin-top:3px;white-space:nowrap;}
+.bar-val{font-size:10px;color:#fff;margin-bottom:2px;}
+.receb-by-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.receb-by-name{font-size:12px;color:#fff;width:80px;white-space:nowrap;}
+.receb-by-bar{height:14px;background:#3b82f6;border-radius:2px;min-width:4px;}
+.receb-by-val{font-size:12px;color:rgba(255,255,255,.7);margin-left:4px;}
+/* DROPDOWN AÇÕES */
+.dd-wrap{position:relative;display:inline-block;}
+.dd-btn{padding:4px 10px;background:#6b7280;color:#fff;border:none;border-radius:5px;font-size:12px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.dd-btn:hover{background:#4b5563;}
+.dd-btn::after{content:'▾';font-size:10px;}
+.dd-menu{display:none;position:absolute;right:0;top:110%;background:#fff;border:1px solid #e5e7eb;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.12);z-index:999;min-width:130px;overflow:hidden;}
+.dd-menu.open{display:block;}
+.dd-menu a{display:block;padding:9px 16px;font-size:13px;color:#374151;cursor:pointer;border-bottom:1px solid #f3f4f6;text-decoration:none;}
+.dd-menu a:last-child{border-bottom:none;}
+.dd-menu a:hover{background:#f9fafb;color:#111;}
+.dd-menu a.red{color:#dc2626;}
+.dd-menu a.red:hover{background:#fef2f2;}
+
+/* MODAL ATUALIZAÇÃO */
+.upd-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:7px;color:rgba(255,255,255,.8);font-size:12px;cursor:pointer;transition:all .2s;}
+.upd-btn:hover{background:rgba(255,255,255,.2);color:#fff;}
+.upd-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;}
+.upd-dot.checking{background:#f59e0b;animation:spin 1s linear infinite;}
+.upd-dot.available{background:#3b82f6;animation:pulse 1s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.upd-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;align-items:center;justify-content:center;}
+.upd-modal.open{display:flex;}
+.upd-box{background:#fff;border-radius:14px;padding:32px;width:420px;box-shadow:0 20px 60px rgba(0,0,0,.3);}
+.upd-box h3{font-size:17px;font-weight:700;color:#111;margin-bottom:8px;}
+.upd-box p{font-size:13px;color:#6b7280;margin-bottom:20px;line-height:1.6;}
+.upd-version{display:flex;align-items:center;justify-content:space-between;background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 16px;margin-bottom:16px;}
+.upd-version-label{font-size:11px;color:#9ca3af;text-transform:uppercase;letter-spacing:.5px;}
+.upd-version-val{font-size:15px;font-weight:700;color:#1e3a8a;}
+.upd-status-ok{display:flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#16a34a;font-weight:500;}
+.upd-status-new{display:flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#1d4ed8;font-weight:500;}
+.upd-notes{background:#f9fafb;border-radius:8px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#6b7280;line-height:1.8;}
+.upd-notes strong{color:#374151;display:block;margin-bottom:6px;font-size:13px;}
+.upd-btns{display:flex;gap:8px;justify-content:flex-end;}
+.upd-btns button{padding:9px 20px;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;}
+.btn-upd-cancel{border:1px solid #d1d5db;background:#fff;color:#374151;}
+.btn-upd-go{border:none;background:#1e3a8a;color:#fff;}
+.btn-upd-go:hover{background:#1e40af;}
+
+#toast{position:fixed;bottom:24px;right:24px;background:#1e2a3a;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;display:none;z-index:999;box-shadow:0 4px 16px rgba(0,0,0,.2);}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="pgLogin">
+  <!-- PAINEL ESQUERDO -->
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:48px 56px;max-width:460px">
+    <div style="margin-bottom:32px">
+      <div style="font-size:13px;color:#6b7280;margin-bottom:24px">Bem-vindo ao sistema</div>
+      <h2 style="font-size:22px;font-weight:700;color:#1e2a3a;margin-bottom:6px">Faça seu login</h2>
+      <p style="font-size:13px;color:#9ca3af">Digite suas credenciais para acessar</p>
+    </div>
+    <div class="lf">
+      <label style="font-size:12px;font-weight:600;color:#374151;display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span style="color:#6b7280">&#128100;</span> Usuário
+      </label>
+      <input type="text" id="lUser" placeholder="fsdsilva07@gmail.com" onkeydown="if(event.key==='Enter')doLogin()"
+        style="width:100%;height:42px;border:1px solid #d1d5db;border-radius:8px;padding:0 14px;font-size:14px;outline:none;font-family:inherit;color:#111;background:#f9fafb"/>
+    </div>
+    <div class="lf">
+      <label style="font-size:12px;font-weight:600;color:#374151;display:flex;align-items:center;gap:6px;margin-bottom:6px">
+        <span style="color:#6b7280">&#128274;</span> Senha
+      </label>
+      <input type="password" id="lPass" placeholder="••••••" onkeydown="if(event.key==='Enter')doLogin()"
+        style="width:100%;height:42px;border:1px solid #d1d5db;border-radius:8px;padding:0 14px;font-size:14px;outline:none;font-family:inherit;color:#111;background:#f9fafb"/>
+    </div>
+    <div class="login-err" id="lErr" style="margin-bottom:10px">Usuário ou senha incorretos.</div>
+    <button onclick="doLogin()" style="width:100%;height:44px;background:#1e3a8a;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:4px;letter-spacing:0.3px">
+      Acessar
+    </button>
+    <div style="margin-top:24px;font-size:11px;color:#d1d5db;text-align:center">
+      NexusTech Sistema de Gestão © 2026
+    </div>
+  </div>
+  <!-- PAINEL DIREITO COM LOGO -->
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#1d4ed8 100%);min-height:100vh;padding:40px">
+    <!-- LOGO SVG NEXUSTECH -->
+    <svg viewBox="0 0 200 200" width="160" height="160" xmlns="http://www.w3.org/2000/svg" style="margin-bottom:24px;filter:drop-shadow(0 8px 32px rgba(59,130,246,.5))">
+      <!-- Círculo externo -->
+      <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="2"/>
+      <!-- Arcos decorativos -->
+      <path d="M100 20 A80 80 0 0 1 180 100" fill="none" stroke="#3b82f6" stroke-width="6" stroke-linecap="round"/>
+      <path d="M180 100 A80 80 0 0 1 100 180" fill="none" stroke="#60a5fa" stroke-width="4" stroke-linecap="round" opacity=".7"/>
+      <path d="M100 180 A80 80 0 0 1 20 100" fill="none" stroke="#93c5fd" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+      <path d="M20 100 A80 80 0 0 1 100 20" fill="none" stroke="#bfdbfe" stroke-width="2" stroke-linecap="round" opacity=".3"/>
+      <!-- Círculo interno -->
+      <circle cx="100" cy="100" r="54" fill="#1e3a8a" stroke="#3b82f6" stroke-width="2"/>
+      <!-- Letra N estilizada -->
+      <text x="100" y="118" font-family="Arial Black, sans-serif" font-size="52" font-weight="900" fill="#fff" text-anchor="middle" letter-spacing="-2">N</text>
+      <!-- Pontos de conexão -->
+      <circle cx="100" cy="20" r="5" fill="#3b82f6"/>
+      <circle cx="180" cy="100" r="5" fill="#60a5fa"/>
+      <circle cx="100" cy="180" r="4" fill="#93c5fd"/>
+      <circle cx="20" cy="100" r="4" fill="#bfdbfe"/>
+    </svg>
+    <div style="text-align:center">
+      <div style="font-size:32px;font-weight:900;color:#fff;letter-spacing:2px;text-shadow:0 2px 16px rgba(0,0,0,.3)">
+        <span style="color:#fff">NEXUS</span><span style="color:#60a5fa">TECH</span>
+      </div>
+      <div style="font-size:12px;color:rgba(255,255,255,.5);letter-spacing:4px;text-transform:uppercase;margin-top:6px">Sistema de Gestão</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL SENHA -->
+<div class="modal-bg" id="modalBg">
+  <div class="modal-box">
+    <h3 id="mTit">Confirmar acao</h3>
+    <p id="mDesc">Digite sua senha para continuar.</p>
+    <input type="password" id="mPass" placeholder="Sua senha..." onkeydown="if(event.key==='Enter')doModal()"/>
+    <div class="modal-err" id="mErr">Senha incorreta.</div>
+    <div class="modal-btns">
+      <button class="mc" onclick="closeModal()">Cancelar</button>
+      <button class="mok" onclick="doModal()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="pgApp">
+  <nav class="sidebar">
+    <div class="sl"><span>NexusTech</span><small>Sistema de Gestão</small></div>
+    <div class="su">
+      <div class="su-av" id="uAv">?</div>
+      <div class="su-info"><strong id="uNome">-</strong><small id="uRole">-</small></div>
+      <button class="btn-out" onclick="doLogout()" title="Sair">&#9211;</button>
+    </div>
+    <div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.08)">
+      <button class="upd-btn" onclick="abrirUpd()" style="width:100%">
+        <div class="upd-dot" id="updDot"></div>
+        <span id="updBtnText">Verificar atualizações</span>
+      </button>
+    </div>
+    <div class="ss">
+      <div class="ss-t">Cadastros</div>
+      <div class="si" id="mn-cadastros" onclick="nav('cadastros')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Cadastros
+      </div>
+      <div class="si" id="mn-produto" onclick="nav('produto')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Cadastro de Produtos
+      </div>
+      <div class="si active" id="mn-lista" onclick="nav('lista')">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Produtos
+      </div>
+      <div class="si" onclick="nav('wip')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Clientes</div>
+      <div class="si" onclick="nav('wip')"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Fornecedores</div>
+    </div>
+    <div class="ss">
+      <div class="ss-t">Estoque</div>
+      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Romaneio Geral</div>
+      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>Romaneios Pre Set.</div>
+      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>Romaneio Separacao</div>
+      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>Conferencia</div>
+      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Gerar Rom. Entrega</div>
+      <div class="si sub" id="mn-entrega" onclick="nav('entrega')"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Romaneio Entrega</div>
+      <div class="si sub" id="mn-receb" onclick="toggleRecebMenu()">
+        <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Recebimentos <span id="arrowRecebMenu" style="margin-left:auto;font-size:12px">&#9660;</span>
+      </div>
+      <div id="recebSubmenu" style="display:none">
+        <div class="si sub" id="mn-receb-novo" onclick="nav('receb-novo')" style="padding-left:48px;font-size:11px">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Lancar Novo
+        </div>
+        <div class="si sub" id="mn-receb-hist" onclick="nav('receb-hist')" style="padding-left:48px;font-size:11px">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Entradas
+        </div>
+        <div class="si sub" id="mn-receb-dash" onclick="nav('receb-dash')" style="padding-left:48px;font-size:11px">
+          <svg viewBox="0 0 24 24"><rect x="2" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="18" y="13" width="4" height="8"/></svg>Dashboard
+        </div>
+      </div>
+      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>Logistica Reversa</div>
+      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Estoque</div>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="topbar"><span class="bc" id="breadcrumb">Cadastros / <span>Produtos</span></span></div>
+    <div class="content">
+
+      <!-- CADASTROS -->
+      <div class="page" id="pg-cadastros">
+        <div style="max-width:1100px;margin:0 auto"><div class="cg">
+          <div class="cc">
+            <div class="cc-h"><h3>&#128193; Familias</h3><small id="cntFam" style="font-size:11px;color:#6b7280">0</small></div>
+            <div class="cc-b">
+              <div class="ci-row"><input type="text" id="inFam" placeholder="Ex: Acessorios, Estoque Loja..." onkeydown="if(event.key==='Enter')addCad('fam')"/><button class="btn-ca" onclick="addCad('fam')">+</button></div>
+              <div class="cl" id="lstFam"></div>
+            </div>
+          </div>
+          <div class="cc">
+            <div class="cc-h"><h3>&#128194; Subfamilias</h3><small id="cntSub" style="font-size:11px;color:#6b7280">0</small></div>
+            <div class="cc-b">
+              <div class="ci-row"><select id="subPai"><option value="">Familia pai...</option></select></div>
+              <div class="ci-row" style="margin-top:6px"><input type="text" id="inSub" placeholder="Nome da subfamilia..." onkeydown="if(event.key==='Enter')addCad('sub')"/><button class="btn-ca" onclick="addCad('sub')">+</button></div>
+              <div class="cl" id="lstSub"></div>
+            </div>
+          </div>
+          <div class="cc">
+            <div class="cc-h"><h3>&#128663; Marcas de Veiculos</h3><small id="cntMV" style="font-size:11px;color:#6b7280">0</small></div>
+            <div class="cc-b">
+              <div class="ci-row"><input type="text" id="inMV" placeholder="Ex: VOLKSWAGEN, FIAT..." onkeydown="if(event.key==='Enter')addCad('mv')"/><button class="btn-ca" onclick="addCad('mv')">+</button></div>
+              <div style="margin-bottom:8px">
+                <select id="mvModeloPai" onchange="renderModelosCad()" style="width:100%;height:30px;border:1px solid #e5e7eb;border-radius:6px;padding:0 8px;font-size:12px;outline:none;margin-top:4px"><option value="">Adicionar modelo para marca...</option></select>
+                <div style="display:flex;gap:6px;margin-top:6px"><input type="text" id="inModelo" placeholder="Modelo (ex: TORO, POLO...)" style="flex:1;height:30px;border:1px solid #e5e7eb;border-radius:6px;padding:0 8px;font-size:12px;outline:none"/><button class="btn-ca" onclick="addModelo()" style="font-size:14px;height:30px">+</button></div>
+              </div>
+              <div class="cl" id="lstMV"></div>
+            </div>
+          </div>
+          <div class="cc">
+            <div class="cc-h"><h3>&#127991; Marcas de Produtos</h3><small id="cntMP" style="font-size:11px;color:#6b7280">0</small></div>
+            <div class="cc-b">
+              <div class="ci-row"><input type="text" id="inMP" placeholder="Ex: BOSCH, DELPHI..." onkeydown="if(event.key==='Enter')addCad('mp')"/><button class="btn-ca" onclick="addCad('mp')">+</button></div>
+              <div class="cl" id="lstMP"></div>
+            </div>
+          </div>
+          <div class="cc" style="grid-column:span 2">
+            <div class="cc-h"><h3>&#128100; Usuarios</h3><small id="cntU" style="font-size:11px;color:#6b7280">0</small></div>
+            <div class="cc-b">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end">
+                <div><label style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Nome</label><input type="text" id="uNomeN" placeholder="Nome completo" style="height:34px;width:100%;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;font-family:inherit"/></div>
+                <div><label style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Login</label><input type="text" id="uLogin" placeholder="Login" style="height:34px;width:100%;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;font-family:inherit"/></div>
+                <div><label style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Senha</label><input type="password" id="uSenha" placeholder="Senha" style="height:34px;width:100%;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;font-family:inherit"/></div>
+                <div style="display:flex;gap:6px;align-items:flex-end">
+                  <select id="uRole" style="height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 8px;font-size:13px;outline:none"><option>Operador</option><option>Gerente</option><option>Admin</option></select>
+                  <button class="btn-ca" onclick="addUser()" style="font-size:13px;padding:0 14px;width:auto">Criar</button>
+                </div>
+              </div>
+              <div class="cl" id="lstU" style="margin-top:10px"></div>
+            </div>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- CADASTRO PRODUTO -->
+      <div class="page" id="pg-produto">
+        <div style="max-width:960px;margin:0 auto"><div class="fc">
+          <div class="fc-h"><h2 id="fTit">Novo Produto</h2></div>
+          <input type="hidden" id="editId"/>
+          <div class="fb">
+            <div class="fr">
+              <div class="fg"><label>Tipo</label><div class="fi"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg><select id="sTipo"><option value="">Tipo</option><option>Produto para revenda</option><option>Kit para Revenda</option><option>Materia Prima</option><option>Consumo Proprio</option><option>Bem Ativo</option><option>Fabricado</option></select></div></div>
+              <div class="fg"><label>Origem</label><div class="fi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/></svg><select id="sOrigem"><option value="">Origem</option><option>0 - Nacional</option><option>1 - Estrangeira importacao direta</option><option>2 - Estrangeira mercado interno</option><option>3 - Nacional CI superior 40%</option><option>4 - Nacional Decreto 288</option><option>5 - Nacional CI inferior 40%</option><option>6 - Estrangeira sem similar</option><option>7 - Estrangeira mercado interno sem similar</option></select></div></div>
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Procedencia</label><div class="fi"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><select id="sProc" onchange="gerarCod()"><option value="">Selecione a Procedencia</option><option value="GN">Genuino</option><option value="AT">Alternativo</option><option value="DT">Distribuidor</option><option value="GR">Geral</option></select></div></div>
+              <div class="fg"><label>Unidade de medida</label><div class="fi"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg><select id="sUnid"><option value="">Selecione a unidade</option><option>Unidade</option><option>Quilograma</option><option>Litro</option><option>Metro</option></select></div></div>
+            </div>
+            <div class="fg"><label>Nome do produto</label><div class="fi"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg><input type="text" id="iNome" placeholder="Nome do Produto" oninput="gerarBarras()"/></div></div>
+            <div class="fr">
+              <div class="fg"><label>NCM</label><div class="fi"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg><input type="text" id="iNCM" placeholder="NCM"/></div></div>
+              <div class="fg"><label>CEST</label><div class="fi"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg><input type="text" id="iCEST" placeholder="CEST"/></div></div>
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Familia</label><div class="fi"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/></svg><select id="sFam" onchange="carregarSubs()"><option value="">Selecione a familia</option></select></div></div>
+              <div class="fg"><label>Subfamilia</label><div class="fi"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/></svg><select id="sSub"><option value="">Selecione a subfamilia</option></select></div></div>
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Marca do Veiculo</label><div class="fi"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/></svg><select id="sMV"><option value="">Selecione a marca do veiculo</option></select></div></div>
+              <div class="fg"><label>Marca do Produto</label><div class="fi"><svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/></svg><select id="sMP"><option value="">Selecione a marca do produto</option></select></div></div>
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Garantia</label><div class="fi"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><select id="sGar"><option value="">Selecione a garantia</option><option>3 Meses</option><option>6 Meses</option><option>1 Ano</option><option>1 Ano e 6 Meses</option><option>2 Anos</option><option>2 Anos e 6 Meses</option><option>3 Anos</option><option>3 Anos e 6 Meses</option><option>4 Anos</option><option>4 Anos e 6 Meses</option><option>5 Anos</option></select></div></div>
+              <div class="fg"><label>Tipo da Comissao</label><div class="fi"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><select id="sCom"><option value="">Tipo da Comissao</option><option>Estetica</option><option>Acessorio</option></select></div></div>
+            </div>
+            <div class="fr">
+              <div class="fg"><label>Valor Unitario (R$)</label><div class="fi"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg><input type="number" id="iValor" placeholder="0,00" step="0.01" min="0"/></div></div>
+              <div class="fg"><label>Cor do produto <small style="color:#9ca3af">(opcional)</small></label><div class="fi"><svg viewBox="0 0 24 24"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/></svg><input type="text" id="iCor" placeholder="Ex: Preto, Vermelho..."/></div></div>
+            </div>
+            <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:12px 14px;">
+              <div class="fr3">
+                <div class="fg"><label>ID do Produto <small style="color:#16a34a">(automatico)</small></label><div class="fi dis"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/></svg><input type="text" id="oProdId" readonly placeholder="Ex: 0001"/><span class="ib" id="oIB" style="display:none">ID</span></div></div>
+                <div class="fg"><label>Codigo <small style="color:#2563eb">(pela procedencia)</small></label><div class="fi dis"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg><input type="text" id="oCod" readonly placeholder="Ex: GN0001"/><span class="ab" id="oCB" style="display:none">Auto</span></div></div>
+                <div class="fg"><label>Codigo de barras <small style="color:#9ca3af">(automatico)</small></label><div class="fi dis"><svg viewBox="0 0 24 24"><path d="M3 5v14M8 5v14M12 5v14M17 5v14M21 5v14"/></svg><input type="text" id="oBar" readonly placeholder="Gerado pelo nome..."/><span class="ab" id="oBB" style="display:none">Auto</span></div></div>
+              </div>
+            </div>
+            <div class="sep">
+              <div class="sep-l">Veiculos Aplicaveis</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+                <select id="vMarcaSel" onchange="carregarModelosForm()" style="height:36px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;background:#fff;color:#111"><option value="">Marca do veiculo...</option></select>
+                <select id="vModeloSel" style="height:36px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;background:#fff;color:#111"><option value="">Modelo...</option></select>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;margin-bottom:8px">
+                <select id="vAnoDe" style="height:36px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;background:#fff;color:#111"></select>
+                <select id="vAnoAte" style="height:36px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;background:#fff;color:#111"></select>
+                <button class="btn-add" onclick="addVeic()">+</button>
+              </div>
+              <div class="tags" id="veicTags"></div>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="btn" onclick="limparForm()">Cancelar</button>
+            <button class="btn btn-p" id="btnSalvar" onclick="salvarProd()">Salvar produto</button>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- LISTA PRODUTOS -->
+      <div class="page active" id="pg-lista">
+        <div style="max-width:1200px;margin:0 auto"><div class="lfc">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+            <h2>Filtros Avancados e Entradas</h2>
+            <button class="btn-np" onclick="nav('produto')">+ Cadastrar Produto</button>
+          </div>
+          <div class="lg3">
+            <div class="lfg"><label>Nome do Produto ou Peca</label><input type="text" id="fNome" placeholder="Digite e pressione Enter..." onkeydown="if(event.key==='Enter')buscar()"/></div>
+            <div class="lfg"><label>Codigo Peca</label><input type="text" id="fCod" placeholder="Ex: GN0001" onkeydown="if(event.key==='Enter')buscar()"/></div>
+            <div class="lfg"><label>Codigo de Barras</label><input type="text" id="fBar" placeholder="Codigo de barras" onkeydown="if(event.key==='Enter')buscar()"/></div>
+          </div>
+          <div class="lg2">
+            <div class="lfg"><label>Endereco / Localizacao</label><input type="text" id="fEnd" placeholder="Ex: Gaveta B3" onkeydown="if(event.key==='Enter')buscar()"/></div>
+            <div class="lfg"><label>Familia</label><select id="fFam"><option value="">Todas</option></select></div>
+          </div>
+          <button class="btn-esc" id="btnEsc" onclick="toggleVeic()">Esconder Veiculo</button>
+          <div class="vbox" id="vbox">
+            <div class="vgrid">
+              <div class="lfg"><label>Marca do Veiculo</label><select id="fMarca" onchange="carregarModelosFiltro()"><option value="">Todas</option></select></div>
+              <div class="lfg"><label>Modelo</label><select id="fModelo"><option value="">Todos os modelos</option></select></div>
+            </div>
+          </div>
+          <div style="margin-top:14px;display:flex;gap:10px;align-items:center">
+            <button class="btn-buscar" onclick="buscar()">Buscar e Inserir no Painel</button>
+            <span style="font-size:12px;color:#9ca3af">ou pressione Enter em qualquer campo</span>
+          </div>
+        </div>
+        <div class="tc" id="tResult">
+          <div class="th"><span>Estoque Detalhado</span><span id="tTotal" style="font-size:12px;color:#6b7280;font-weight:400"></span></div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead><tr><th>Qtd</th><th>ID</th><th>Codigo</th><th>Nome / Aplicação</th><th>Família</th><th>Marcas</th><th>Valor Unit.</th><th>Endereço</th><th>Status</th><th>Ações</th></tr></thead>
+              <tbody id="tBody"></tbody>
+            </table>
+          </div>
+        </div></div>
+      </div>
+
+      <!-- FICHA TECNICA -->
+      <div class="page" id="pg-ficha">
+        <div style="max-width:900px">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+            <button onclick="nav('lista')" style="height:34px;padding:0 14px;border:1px solid #e5e7eb;border-radius:7px;background:#fff;font-size:13px;cursor:pointer">&#8592; Voltar</button>
+            <h2 id="fichaTit" style="font-size:16px;font-weight:700;color:#111"></h2>
+          </div>
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden;margin-bottom:16px">
+            <div style="background:#2563eb;padding:12px 20px;display:flex;align-items:center;justify-content:space-between">
+              <span style="color:#fff;font-size:14px;font-weight:600">Ficha Tecnica</span>
+              <div style="display:flex;gap:8px">
+                <button onclick="editarDaFicha()" style="padding:6px 14px;background:#f59e0b;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer">Editar</button>
+                <button id="fichaStBtn" onclick="toggleStFicha()" style="padding:6px 14px;background:#ef4444;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer">Inativar</button>
+                <button onclick="excluirDaFicha()" style="padding:6px 14px;background:#374151;color:#fff;border:none;border-radius:6px;font-size:12px;cursor:pointer">Excluir</button>
+              </div>
+            </div>
+            <div class="ficha-grid" id="fichaGrid"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+              <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:11px 16px;font-size:13px;font-weight:600">Veiculos Aplicaveis</div>
+              <div style="padding:14px 16px" id="fichaVeics"></div>
+            </div>
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+              <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:11px 16px;font-size:13px;font-weight:600">Codigos</div>
+              <div style="padding:14px 16px" id="fichaCods"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ROMANEIO -->
+      <div class="page" id="pg-entrega">
+        <div class="fcard">
+          <div class="frow"><select class="fsel" id="romSt"><option value="">Status</option><option value="nao">Nao Entregue</option><option value="ent">Entregue</option><option value="todos">Todos</option></select><input class="finp" type="text" placeholder="Ordem de por"/></div>
+          <button class="btn-ex" onclick="filtrarRom()">Exibir</button>
+        </div>
+        <div class="tc" style="margin-top:0">
+          <div class="th">Romaneios</div>
+          <div class="tcon"><div style="display:flex;align-items:center;gap:6px">Exibir <select id="romPP" onchange="renderRom()"><option>25</option><option>50</option><option>100</option></select> itens</div><div style="display:flex;align-items:center;gap:6px">Buscar: <input type="text" id="romBusca" oninput="renderRom()"/></div></div>
+          <div style="overflow-x:auto"><table><thead><tr><th>ID</th><th>Motorista</th><th>Veiculo</th><th>Status</th><th>Data</th><th></th></tr></thead><tbody id="romBody"></tbody></table></div>
+        </div>
+      </div>
+
+      <!-- RECEB: NOVO LANCAMENTO -->
+      <div class="page" id="pg-receb-novo">
+        <div class="rec-section">
+          <div class="rec-sec-h" style="cursor:default">
+            <h3>+ Lancar Novo Recebimento</h3>
+          </div>
+          <div class="rec-sec-b">
+            <div class="rec-form-grid">
+              <div class="rec-fg"><label>Mes</label><select id="rMes"><option value="">Selecione</option><option>Janeiro</option><option>Fevereiro</option><option>Marco</option><option>Abril</option><option>Maio</option><option>Junho</option><option>Julho</option><option>Agosto</option><option>Setembro</option><option>Outubro</option><option>Novembro</option><option>Dezembro</option></select></div>
+              <div class="rec-fg"><label>Data Pedido Compras</label><input type="date" id="rDtPed" oninput="calcDias()"/></div>
+              <div class="rec-fg"><label>N Pedido</label><input type="text" id="rNPed" placeholder="Ex: 33656"/></div>
+              <div class="rec-fg"><label>Dias p/ Recebimento</label><input type="text" id="rDias" readonly placeholder="Automatico"/></div>
+            </div>
+            <div class="rec-form-grid">
+              <div class="rec-fg"><label>Data Recebimento</label><input type="date" id="rDtRec" oninput="calcDias()"/></div>
+              <div class="rec-fg"><label>Fornecedor *</label><input type="text" id="rForn" placeholder="Nome do fornecedor"/></div>
+              <div class="rec-fg"><label>Nota Fiscal</label><input type="text" id="rNF" placeholder="Ex: 7442"/></div>
+              <div class="rec-fg"><label>Volume(s)</label><input type="number" id="rVol" placeholder="Ex: 10"/></div>
+            </div>
+            <div class="rec-form-grid">
+              <div class="rec-fg"><label>Recebido Por</label><input type="text" id="rRecPor" placeholder="Nome do responsavel"/></div>
+              <div class="rec-fg"><label>Tipo de Recebimento</label><select id="rTipo"><option>ESTOQUE</option><option>COLETA</option><option>TRANSFERENCIA</option></select></div>
+              <div class="rec-fg"><label>Tipo de Entrada</label><select id="rTipoEnt"><option value="">Selecione</option><option>VENDA</option><option>ESTETICA</option><option>CONSUMO</option></select></div>
+              <div class="rec-fg"><label>Valor Total NF (R$)</label><input type="number" id="rValor" placeholder="Ex: 1500.00" step="0.01"/></div>
+              <div class="rec-fg"><label>Status</label><input type="text" id="rStatus" placeholder="Ex: OK / DIVERGENCIA / PENDENTE"/></div>
+            </div>
+            <div class="rec-fg" style="margin-bottom:16px"><label>Observacao</label><textarea id="rObs" placeholder="Observacoes adicionais..."></textarea></div>
+            <button class="btn-lancar" onclick="lancarReceb()">Lancar Recebimento</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECEB: HISTORICO -->
+      <div class="page" id="pg-receb-hist">
+        <div class="rec-section">
+          <div class="rec-sec-h" style="cursor:default">
+            <h3>Entradas de Recebimento</h3>
+          </div>
+          <div class="rec-sec-b">
+            <div class="rec-filtros">
+              <select id="rFiltMes" onchange="renderHist()">
+                <option value="">Todos os meses</option>
+                <option>Janeiro</option><option>Fevereiro</option><option>Marco</option>
+                <option>Abril</option><option>Maio</option><option>Junho</option>
+                <option>Julho</option><option>Agosto</option><option>Setembro</option>
+                <option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+              </select>
+              <input type="text" id="rBusca" placeholder="Buscar fornecedor, pedido..." oninput="renderHist()"/>
+              <select id="rFiltTipoEnt" onchange="renderHist()" style="height:34px;border:1px solid #d1d5db;border-radius:7px;padding:0 10px;font-size:13px;color:#111;background:#fff;outline:none;">
+                <option value="">Todos os tipos</option>
+                <option value="VENDA">Venda</option>
+                <option value="ESTETICA">Estetica</option>
+                <option value="CONSUMO">Consumo</option>
+              </select>
+              <label style="height:34px;padding:0 14px;background:#16a34a;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:6px">
+                Importar Excel
+                <input type="file" accept=".xlsx,.xls" onchange="importarExcel(event)" style="display:none"/>
+              </label>
+            </div>
+            <div style="overflow-x:auto">
+              <table>
+                <thead><tr><th style="text-align:center">MÊS</th><th style="text-align:center">DATA PEDIDO</th><th style="text-align:center">N° PEDIDO</th><th style="text-align:center">PRAZO ENTREGA</th><th style="text-align:center">DATA RECEB.</th><th style="text-align:center">FORNECEDOR</th><th style="text-align:center">NF</th><th style="text-align:center">VOLUMES</th><th style="text-align:center">RECEBIDO POR</th><th style="text-align:center">TIPO REC.</th><th style="text-align:center">TIPO ENT.</th><th style="text-align:center">VALOR NF</th><th style="text-align:center">STATUS</th><th style="text-align:center">AÇÕES</th></tr></thead>
+                <tbody id="histBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RECEB: DASHBOARD -->
+      <div class="page" id="pg-receb-dash">
+        <div style="background:#111827;border-radius:12px;padding:20px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px;">
+            <h2 style="color:#fff;font-size:15px;font-weight:700;">Recebimento NexusTech (Estoque)</h2>
+            <div style="display:flex;gap:8px;align-items:center">
+              <select id="dFiltMes" onchange="renderDash()" style="height:34px;border:1px solid #555;border-radius:7px;padding:0 10px;font-size:13px;color:#111;background:#fff;outline:none;">
+                <option value="">Todos os meses</option>
+                <option value="janeiro">Janeiro</option><option value="fevereiro">Fevereiro</option>
+                <option value="marco">Marco</option><option value="abril">Abril</option>
+                <option value="maio">Maio</option><option value="junho">Junho</option>
+                <option value="julho">Julho</option><option value="agosto">Agosto</option>
+                <option value="setembro">Setembro</option><option value="outubro">Outubro</option>
+                <option value="novembro">Novembro</option><option value="dezembro">Dezembro</option>
+              </select>
+              <select id="dFiltDia" onchange="renderDash()" style="height:34px;border:1px solid #555;border-radius:7px;padding:0 10px;font-size:13px;color:#111;background:#fff;outline:none;">
+                <option value="">Todos os dias</option>
+              </select>
+              <select id="dFiltTipoEnt" onchange="renderDash()" style="height:34px;border:1px solid #555;border-radius:7px;padding:0 10px;font-size:13px;color:#111;background:#fff;outline:none;">
+                <option value="">Todos os tipos</option>
+                <option value="VENDA">Venda</option>
+                <option value="ESTETICA">Estetica</option>
+                <option value="CONSUMO">Consumo</option>
+              </select>
+            </div>
+          </div>
+          <div class="dash-cards">
+            <div class="dash-card"><div class="dash-card-label">Total Divergencias</div><div class="dash-card-val" id="dDiv">0</div></div>
+            <div class="dash-card"><div class="dash-card-label">Total NF Recebidas</div><div class="dash-card-val" id="dNF">0</div></div>
+            <div class="dash-card"><div class="dash-card-label">Total Volumes</div><div class="dash-card-val" id="dVol">0</div></div>
+            <div class="dash-card"><div class="dash-card-label">Valor Total</div><div class="dash-card-val" id="dVal">R$ 0</div></div>
+            <div class="dash-card" style="background:#1a3a2a"><div class="dash-card-label">Venda</div><div class="dash-card-val" id="dVenda" style="font-size:20px">0</div></div>
+            <div class="dash-card" style="background:#2a1a3a"><div class="dash-card-label">Estetica</div><div class="dash-card-val" id="dEst" style="font-size:20px">0</div></div>
+            <div class="dash-card" style="background:#3a2a1a"><div class="dash-card-label">Consumo</div><div class="dash-card-val" id="dCons" style="font-size:20px">0</div></div>
+            <div class="dash-card" style="background:#1a2a3a"><div class="dash-card-label">Sem Nota Fiscal</div><div class="dash-card-val" id="dSemNF" style="font-size:20px">0</div></div>
+          </div>
+          <div class="dash-charts" style="margin-bottom:16px">
+            <div class="dash-box">
+              <h4 id="dTitNF">Notas Fiscais Recebidas</h4>
+              <div style="position:relative">
+                <div class="bar-wrap" id="dBarNF" style="height:160px;align-items:flex-end;overflow:visible"></div>
+                <div id="dMesLabelNF" style="text-align:center;color:rgba(255,255,255,.4);font-size:11px;margin-top:4px"></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start">
+            <div class="dash-box">
+              <h4 id="dTitVol">Volumes Recebidos</h4>
+              <div style="position:relative">
+                <div class="bar-wrap" id="dBarVol" style="height:140px;align-items:flex-end;overflow:visible"></div>
+                <div id="dMesLabelVol" style="text-align:center;color:rgba(255,255,255,.4);font-size:11px;margin-top:4px"></div>
+              </div>
+            </div>
+            <div class="dash-box">
+              <h4>Recebido Por</h4>
+              <div id="dPor" style="margin-top:4px;max-height:130px;overflow-y:auto"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- WIP -->
+      <div class="page" id="pg-wip">
+        <div style="padding:60px;text-align:center;color:#9ca3af">
+          <div style="font-size:40px;margin-bottom:12px">&#128679;</div>
+          <div style="font-size:15px;font-weight:500;color:#374151;margin-bottom:6px">Em desenvolvimento</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<!-- MODAL ATUALIZAÇÃO -->
+<div class="upd-modal" id="updModal">
+  <div class="upd-box">
+    <h3 id="updTitle">Verificando atualizações...</h3>
+    <p id="updDesc">Aguarde enquanto verificamos se há uma versão mais recente do NexusTech.</p>
+    <div class="upd-version">
+      <div>
+        <div class="upd-version-label">Versão atual</div>
+        <div class="upd-version-val" id="updVerAtual">-</div>
+      </div>
+      <div style="text-align:right">
+        <div class="upd-version-label">Última versão</div>
+        <div class="upd-version-val" id="updVerNova" style="color:#16a34a">-</div>
+      </div>
+    </div>
+    <div id="updStatus"></div>
+    <div id="updNotes" style="display:none">
+      <div class="upd-notes">
+        <strong>📋 O que há de novo:</strong>
+        <span id="updNotesList"></span>
+      </div>
+    </div>
+    <div class="upd-btns">
+      <button class="btn-upd-cancel" onclick="fecharUpd()">Fechar</button>
+      <button class="btn-upd-go" id="updBtnIr" onclick="irParaGithub()" style="display:none">↓ Baixar atualização</button>
+    </div>
+    <div style="font-size:11px;color:#d1d5db;text-align:center;margin-top:12px" id="updFooter"></div>
+  </div>
+</div>
+
+<script>
+// ===== ESTADO =====
+var usuarios = [{nome:'Administrador',login:'admin',senha:'admin123',role:'Admin'}];
+var usuAtual = null;
+var familias = ['Acessorios','Estoque Loja','Lavagem'];
+var subfamilias = [];
+var marcasVeic = ['VOLKSWAGEN','FIAT','CHEVROLET','FORD','TOYOTA','HONDA','HYUNDAI','RENAULT','JEEP','RAM'];
+var modelosPorMarca = {
+  VOLKSWAGEN:['GOL','POLO','T-CROSS','TIGUAN','SAVEIRO','AMAROK','VIRTUS','NIVUS','TERA','VOYAGE'],
+  FIAT:['UNO','PALIO','SIENA','STRADA','TORO','CRONOS','PULSE','FIORINO','MOBI','FASTBACK'],
+  CHEVROLET:['ONIX','TRACKER','S10','MONTANA','SPIN','CRUZE','EQUINOX'],
+  FORD:['KA','FIESTA','ECOSPORT','RANGER','BRONCO SPORT','MAVERICK'],
+  TOYOTA:['COROLLA','HILUX','SW4','YARIS','CAMRY','RAV4'],
+  HONDA:['CIVIC','FIT','HR-V','CR-V','WR-V','CITY'],
+  HYUNDAI:['HB20','CRETA','TUCSON','SANTA FE','I30'],
+  RENAULT:['KWID','SANDERO','LOGAN','DUSTER','CAPTUR','OROCH'],
+  JEEP:['RENEGADE','COMPASS','COMMANDER','GLADIATOR'],
+  RAM:['1500','2500','3500','RAMPAGE'],
+  NISSAN:['KICKS','FRONTIER','VERSA','MARCH'],
+  MITSUBISHI:['ASX','OUTLANDER','L200','ECLIPSE CROSS'],
+  CUMMINS:['ISB','ISC','ISM','ISX','QSB'],
+  CATERPILLAR:['C7','C9','C13','C15','3406']
+};
+var marcasProd = ['BOSCH','DELPHI','DENSO','NGK','VALEO'];
+var contadores = {GN:1,AT:1,DT:1,GR:1};
+var produtos = [];
+var proxId = 1;
+var veics = [];
+var modalCB = null;
+var fichaId = null;
+var veicVisivel = true;
+
+// ===== PERSISTENCIA =====
+function salvar() {
+  try {
+    localStorage.setItem('sf_prod', JSON.stringify(produtos));
+    localStorage.setItem('sf_cont', JSON.stringify(contadores));
+    localStorage.setItem('sf_proxId', proxId);
+    localStorage.setItem('sf_fam', JSON.stringify(familias));
+    localStorage.setItem('sf_sub', JSON.stringify(subfamilias));
+    localStorage.setItem('sf_mv', JSON.stringify(marcasVeic));
+    localStorage.setItem('sf_mpm', JSON.stringify(modelosPorMarca));
+    localStorage.setItem('sf_mp', JSON.stringify(marcasProd));
+    localStorage.setItem('sf_us', JSON.stringify(usuarios));
+  } catch(e) {}
+}
+function carregar() {
+  try {
+    var p=localStorage.getItem('sf_prod'); if(p) produtos=JSON.parse(p);
+    var ct=localStorage.getItem('sf_cont'); if(ct) Object.assign(contadores,JSON.parse(ct));
+    var i=localStorage.getItem('sf_proxId'); if(i) proxId=parseInt(i);
+    var f=localStorage.getItem('sf_fam'); if(f) familias=JSON.parse(f);
+    var s=localStorage.getItem('sf_sub'); if(s) subfamilias=JSON.parse(s);
+    var mv=localStorage.getItem('sf_mv'); if(mv) marcasVeic=JSON.parse(mv);
+    var mpm=localStorage.getItem('sf_mpm'); if(mpm) modelosPorMarca=JSON.parse(mpm);
+    var mp=localStorage.getItem('sf_mp'); if(mp) marcasProd=JSON.parse(mp);
+    var u=localStorage.getItem('sf_us');
+    if(u){var pu=JSON.parse(u);if(pu&&pu.length>0) usuarios=pu;}
+  } catch(e) {}
+}
+
+// ===== LOGIN =====
+function doLogin() {
+  var l=document.getElementById('lUser').value.trim();
+  var s=document.getElementById('lPass').value.trim();
+  var u=null;
+  for(var i=0;i<usuarios.length;i++){if(usuarios[i].login===l&&usuarios[i].senha===s){u=usuarios[i];break;}}
+  if(!u){document.getElementById('lErr').style.display='block';return;}
+  usuAtual=u;
+  localStorage.setItem('sf_session',JSON.stringify({login:u.login,senha:u.senha}));
+  iniciarApp(u);
+}
+
+function iniciarApp(u){
+  document.getElementById('pgLogin').style.display='none';
+  document.getElementById('pgApp').classList.add('on');
+  document.getElementById('uNome').textContent=u.nome;
+  document.getElementById('uRole').textContent=u.role;
+  document.getElementById('uAv').textContent=u.nome.charAt(0).toUpperCase();
+  document.getElementById('lErr').style.display='none';
+  preencherAnos();
+  atualizarSelects();
+  renderCads();
+  renderUsers();
+  buscar();
+  renderRom();
+  // Restaurar página anterior
+  var pag=localStorage.getItem('sf_pagina')||'lista';
+  nav(pag);
+  setTimeout(verificarUpdAuto, 2000);
+}
+function doLogout() {
+  usuAtual=null;
+  localStorage.removeItem('sf_session');
+  localStorage.removeItem('sf_pagina');
+  document.getElementById('pgApp').classList.remove('on');
+  document.getElementById('pgLogin').style.display='flex';
+  document.getElementById('lUser').value='';
+  document.getElementById('lPass').value='';
+}
+
+// ===== MODAL =====
+function openModal(tit,desc,cb) {
+  document.getElementById('mTit').textContent=tit;
+  document.getElementById('mDesc').textContent=desc;
+  document.getElementById('mPass').value='';
+  document.getElementById('mErr').style.display='none';
+  document.getElementById('modalBg').classList.add('open');
+  modalCB=cb;
+  setTimeout(function(){document.getElementById('mPass').focus();},80);
+}
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+  modalCB=null;
+}
+function doModal() {
+  var s=document.getElementById('mPass').value;
+  if(s!==usuAtual.senha){document.getElementById('mErr').style.display='block';return;}
+  var cb=modalCB;
+  document.getElementById('modalBg').classList.remove('open');
+  modalCB=null;
+  if(cb) cb();
+}
+
+// ===== NAVEGACAO =====
+function nav(p) {
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('.si').forEach(function(x){x.classList.remove('active');});
+  var mp={produto:'pg-produto',lista:'pg-lista',entrega:'pg-entrega',wip:'pg-wip',cadastros:'pg-cadastros',ficha:'pg-ficha','receb-novo':'pg-receb-novo','receb-hist':'pg-receb-hist','receb-dash':'pg-receb-dash'};
+  var mm={produto:'mn-produto',lista:'mn-lista',entrega:'mn-entrega',cadastros:'mn-cadastros','receb-novo':'mn-receb-novo','receb-hist':'mn-receb-hist','receb-dash':'mn-receb-dash'};
+  var mb={produto:'Cadastros / <span>Cadastro de Produtos</span>',lista:'Cadastros / <span>Produtos</span>',entrega:'Estoque / <span>Romaneio Entrega</span>',cadastros:'<span>Cadastros</span>',ficha:'Cadastros / Produtos / <span>Ficha Tecnica</span>','receb-novo':'Recebimentos / <span>Lancar Novo</span>','receb-hist':'Recebimentos / <span>Entradas</span>','receb-dash':'Recebimentos / <span>Dashboard</span>',wip:'Em desenvolvimento'};
+  var pg=document.getElementById(mp[p]||'pg-wip');
+  if(pg) pg.classList.add('active');
+  var mn=mm[p]?document.getElementById(mm[p]):null;
+  if(mn) mn.classList.add('active');
+  document.getElementById('breadcrumb').innerHTML=mb[p]||p;
+  if(p==='produto') atualizarSelects();
+  localStorage.setItem('sf_pagina',p);
+  if(p==='receb-hist') renderHist();
+  if(p==='receb-dash') renderDash();
+  if(p==='cadastros'){renderCads();renderUsers();}
+  if(p==='lista'){atualizarSelects();buscar();}
+}
+
+// ===== ANOS =====
+function preencherAnos() {
+  var anoAtual=new Date().getFullYear();
+  var opts='';
+  for(var a=2010;a<=anoAtual;a++) opts+='<option value="'+a+'">'+a+'</option>';
+  var de=document.getElementById('vAnoDe');
+  var ate=document.getElementById('vAnoAte');
+  if(de){de.innerHTML='<option value="">De (ano)</option>'+opts; de.value='2010';}
+  if(ate){ate.innerHTML='<option value="">Ate (ano)</option>'+opts; ate.value=String(anoAtual);}
+}
+
+// ===== CADASTROS =====
+function addCad(tipo) {
+  if(tipo==='fam'){
+    var v=document.getElementById('inFam').value.trim();
+    if(!v||familias.indexOf(v)>=0){document.getElementById('inFam').value='';return;}
+    familias.push(v);document.getElementById('inFam').value='';
+  } else if(tipo==='sub'){
+    var pai=document.getElementById('subPai').value;
+    var v=document.getElementById('inSub').value.trim();
+    if(!v||!pai){alert('Selecione a familia pai.');return;}
+    subfamilias.push({pai:pai,nome:v});document.getElementById('inSub').value='';
+  } else if(tipo==='mv'){
+    var v=document.getElementById('inMV').value.trim().toUpperCase();
+    if(!v||marcasVeic.indexOf(v)>=0){document.getElementById('inMV').value='';return;}
+    marcasVeic.push(v);
+    if(!modelosPorMarca[v]) modelosPorMarca[v]=[];
+    document.getElementById('inMV').value='';
+  } else if(tipo==='mp'){
+    var v=document.getElementById('inMP').value.trim().toUpperCase();
+    if(!v||marcasProd.indexOf(v)>=0){document.getElementById('inMP').value='';return;}
+    marcasProd.push(v);document.getElementById('inMP').value='';
+  }
+  renderCads();atualizarSelects();salvar();
+}
+
+function addModelo() {
+  var marca=document.getElementById('mvModeloPai').value;
+  var mod=document.getElementById('inModelo').value.trim().toUpperCase();
+  if(!marca||!mod){alert('Selecione a marca e digite o modelo.');return;}
+  if(!modelosPorMarca[marca]) modelosPorMarca[marca]=[];
+  if(modelosPorMarca[marca].indexOf(mod)<0) modelosPorMarca[marca].push(mod);
+  document.getElementById('inModelo').value='';
+  renderCads();salvar();
+}
+
+function rmCad(tipo,i) {
+  if(tipo==='fam') familias.splice(i,1);
+  else if(tipo==='sub') subfamilias.splice(i,1);
+  else if(tipo==='mv') marcasVeic.splice(i,1);
+  else if(tipo==='mp') marcasProd.splice(i,1);
+  renderCads();atualizarSelects();salvar();
+}
+
+function renderModelosCad() {
+  var marca=document.getElementById('mvModeloPai').value;
+  var modelos=modelosPorMarca[marca]||[];
+  // apenas exibir info
+}
+
+function renderCads() {
+  var lf=document.getElementById('lstFam');
+  document.getElementById('cntFam').textContent=familias.length+' cadastradas';
+  lf.innerHTML=familias.map(function(f,i){return '<div class="cit"><span>&#128193; '+f+'</span><button class="brm" onclick="rmCad(\'fam\','+i+')">x</button></div>';}).join('')||'<div class="ce">Nenhuma familia</div>';
+
+  var ls=document.getElementById('lstSub');
+  document.getElementById('cntSub').textContent=subfamilias.length+' cadastradas';
+  ls.innerHTML=subfamilias.map(function(s,i){return '<div class="cit"><span>&#128194; '+s.nome+'<span class="cit-s">em '+s.pai+'</span></span><button class="brm" onclick="rmCad(\'sub\','+i+')">x</button></div>';}).join('')||'<div class="ce">Nenhuma subfamilia</div>';
+
+  var lmv=document.getElementById('lstMV');
+  document.getElementById('cntMV').textContent=marcasVeic.length+' cadastradas';
+  lmv.innerHTML=marcasVeic.map(function(m,i){
+    var mods=modelosPorMarca[m]||[];
+    return '<div class="cit"><span>&#128663; '+m+(mods.length?' <span class="cit-s">'+mods.join(', ')+'</span>':'')+'</span><button class="brm" onclick="rmCad(\'mv\','+i+')">x</button></div>';
+  }).join('')||'<div class="ce">Nenhuma marca</div>';
+
+  var lmp=document.getElementById('lstMP');
+  document.getElementById('cntMP').textContent=marcasProd.length+' cadastradas';
+  lmp.innerHTML=marcasProd.map(function(m,i){return '<div class="cit"><span>&#127991; '+m+'</span><button class="brm" onclick="rmCad(\'mp\','+i+')">x</button></div>';}).join('')||'<div class="ce">Nenhuma marca</div>';
+
+  var sp=document.getElementById('subPai');
+  if(sp) sp.innerHTML='<option value="">Familia pai...</option>'+familias.map(function(f){return '<option>'+f+'</option>';}).join('');
+
+  var mvp=document.getElementById('mvModeloPai');
+  if(mvp) mvp.innerHTML='<option value="">Adicionar modelo para marca...</option>'+marcasVeic.map(function(m){return '<option>'+m+'</option>';}).join('');
+}
+
+function addUser() {
+  var nome=document.getElementById('uNomeN').value.trim();
+  var login=document.getElementById('uLogin').value.trim();
+  var senha=document.getElementById('uSenha').value.trim();
+  var role=document.getElementById('uRole').value;
+  if(!nome||!login||!senha){alert('Preencha nome, login e senha.');return;}
+  for(var i=0;i<usuarios.length;i++){if(usuarios[i].login===login){alert('Login ja existe.');return;}}
+  usuarios.push({nome:nome,login:login,senha:senha,role:role});
+  document.getElementById('uNomeN').value='';
+  document.getElementById('uLogin').value='';
+  document.getElementById('uSenha').value='';
+  renderUsers();salvar();
+  toast('Usuario "'+nome+'" criado!');
+}
+
+function rmUser(i) {if(i===0)return;usuarios.splice(i,1);renderUsers();salvar();}
+
+function renderUsers() {
+  var el=document.getElementById('lstU');
+  document.getElementById('cntU').textContent=usuarios.length+' cadastrados';
+  if(!el)return;
+  el.innerHTML=usuarios.map(function(u,i){return '<div class="cit"><span>&#128100; '+u.nome+'<span class="cit-s">'+u.login+' - '+u.role+'</span></span>'+(i>0?'<button class="brm" onclick="rmUser('+i+')">x</button>':'')+'</div>';}).join('');
+}
+
+function atualizarSelects() {
+  var sf=document.getElementById('sFam');
+  if(sf) sf.innerHTML='<option value="">Selecione a familia</option>'+familias.map(function(f){return '<option>'+f+'</option>';}).join('');
+  var smv=document.getElementById('sMV');
+  if(smv) smv.innerHTML='<option value="">Selecione a marca do veiculo</option>'+marcasVeic.map(function(m){return '<option>'+m+'</option>';}).join('');
+  var smp=document.getElementById('sMP');
+  if(smp) smp.innerHTML='<option value="">Selecione a marca do produto</option>'+marcasProd.map(function(m){return '<option>'+m+'</option>';}).join('');
+  var ff=document.getElementById('fFam');
+  if(ff) ff.innerHTML='<option value="">Todas</option>'+familias.map(function(f){return '<option>'+f+'</option>';}).join('');
+  var fm=document.getElementById('fMarca');
+  if(fm) fm.innerHTML='<option value="">Todas</option>'+marcasVeic.map(function(m){return '<option>'+m+'</option>';}).join('');
+  var vms=document.getElementById('vMarcaSel');
+  if(vms) vms.innerHTML='<option value="">Marca do veiculo...</option>'+marcasVeic.map(function(m){return '<option>'+m+'</option>';}).join('');
+}
+
+function carregarSubs() {
+  var fam=document.getElementById('sFam').value;
+  var ss=document.getElementById('sSub');
+  var subs=subfamilias.filter(function(s){return s.pai===fam;});
+  ss.innerHTML='<option value="">Selecione a subfamilia</option>'+subs.map(function(s){return '<option>'+s.nome+'</option>';}).join('');
+}
+
+// ===== VEICULOS NO FORM =====
+function carregarModelosForm() {
+  var marca=document.getElementById('vMarcaSel').value;
+  var sel=document.getElementById('vModeloSel');
+  var mods=modelosPorMarca[marca]||[];
+  sel.innerHTML='<option value="">Modelo...</option>'+mods.map(function(m){return '<option>'+m+'</option>';}).join('');
+}
+
+function addVeic() {
+  var marca=document.getElementById('vMarcaSel').value;
+  var modelo=document.getElementById('vModeloSel').value;
+  var de=document.getElementById('vAnoDe').value;
+  var ate=document.getElementById('vAnoAte').value;
+  var nome=modelo||(marca?marca:'');
+  if(!nome)return;
+  var periodo=de&&ate?de+'-'+ate:de||ate||'';
+  var k=nome+'_'+periodo;
+  for(var i=0;i<veics.length;i++){if(veics[i].k===k)return;}
+  veics.push({k:k,nome:nome,marca:marca,de:de,ate:ate,periodo:periodo});
+  renderVeics();
+}
+
+function rmVeic(k) {
+  veics=veics.filter(function(x){return x.k!==k;});
+  renderVeics();
+}
+
+function renderVeics() {
+  var el=document.getElementById('veicTags');
+  el.innerHTML=veics.map(function(x){
+    return '<div class="tag">&#128664; '+x.nome+(x.periodo?' <span class="ty">'+x.periodo+'</span>':'')+' <span class="rm" onclick="rmVeic(\''+x.k+'\')">x</span></div>';
+  }).join('');
+}
+
+// ===== CODIGOS AUTO =====
+function gerarCod() {
+  var pref=document.getElementById('sProc').value;
+  var editando=document.getElementById('editId').value;
+  var seqId=editando||String(proxId).padStart(4,'0');
+  document.getElementById('oProdId').value=seqId;
+  document.getElementById('oIB').style.display=pref?'inline-block':'none';
+  if(!pref){document.getElementById('oCod').value='';document.getElementById('oCB').style.display='none';return;}
+  var cod=pref==='GR'?'(a definir)':pref+seqId;
+  document.getElementById('oCod').value=cod;
+  document.getElementById('oCB').style.display='inline-block';
+}
+
+function gerarBarras() {
+  var nome=document.getElementById('iNome').value.trim();
+  if(!nome){document.getElementById('oBar').value='';document.getElementById('oBB').style.display='none';return;}
+  var h=Math.abs(nome.split('').reduce(function(a,c){return (a<<5)-a+c.charCodeAt(0);},0));
+  document.getElementById('oBar').value='789'+String(h).padStart(9,'0').slice(0,9)+String(proxId%10);
+  document.getElementById('oBB').style.display='inline-block';
+}
+
+// ===== FORM PRODUTO =====
+function limparForm() {
+  veics=[];renderVeics();
+  var ids=['iNome','iNCM','iCEST','iCor','iValor','editId'];
+  ids.forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  var sels=['sTipo','sOrigem','sProc','sUnid','sFam','sSub','sMV','sMP','sGar','sCom'];
+  sels.forEach(function(id){var e=document.getElementById(id);if(e)e.value='';});
+  document.getElementById('oProdId').value='';
+  document.getElementById('oCod').value='';
+  document.getElementById('oBar').value='';
+  document.getElementById('oIB').style.display='none';
+  document.getElementById('oCB').style.display='none';
+  document.getElementById('oBB').style.display='none';
+  document.getElementById('fTit').textContent='Novo Produto';
+  document.getElementById('btnSalvar').textContent='Salvar produto';
+  document.getElementById('vMarcaSel').value='';
+  document.getElementById('vModeloSel').innerHTML='<option value="">Modelo...</option>';
+  preencherAnos();
+}
+
+function salvarProd() {
+  var nome=document.getElementById('iNome').value.trim();
+  var pref=document.getElementById('sProc').value;
+  if(!nome){alert('Preencha o nome do produto.');return;}
+  var editando=document.getElementById('editId').value;
+  var seqId=editando||String(proxId).padStart(4,'0');
+  var cod=pref&&pref!=='GR'?pref+seqId:'(a definir)';
+  var valor=parseFloat(document.getElementById('iValor').value)||0;
+  var veicStr=veics.map(function(x){return x.nome+(x.periodo?' '+x.periodo:'');}).join(', ');
+  var prod={
+    id:seqId,codigo:cod,nome:nome,barras:document.getElementById('oBar').value,
+    tipo:document.getElementById('sTipo').value,
+    origem:document.getElementById('sOrigem').value,
+    proc:pref,
+    unidade:document.getElementById('sUnid').value,
+    ncm:document.getElementById('iNCM').value,
+    cest:document.getElementById('iCEST').value,
+    familia:document.getElementById('sFam').value,
+    subfamilia:document.getElementById('sSub').value,
+    marcaVeic:document.getElementById('sMV').value,
+    marcaProd:document.getElementById('sMP').value,
+    garantia:document.getElementById('sGar').value,
+    comissao:document.getElementById('sCom').value,
+    cor:document.getElementById('iCor').value,
+    valor:valor,
+    veiculos:veicStr,
+    veicsArr:veics.slice(),
+    endereco:'',status:'ATIVO',qtd:0
+  };
+  if(editando) {
+    var idx=-1;
+    for(var i=0;i<produtos.length;i++){if(produtos[i].id===editando){idx=i;break;}}
+    if(idx>=0){prod.qtd=produtos[idx].qtd;prod.endereco=produtos[idx].endereco;produtos[idx]=prod;}
+    toast('Produto atualizado!');
+  } else {
+    produtos.push(prod);
+    if(pref&&pref!=='GR') contadores[pref]++;
+    proxId++;
+    toast('Produto "'+nome+'" salvo!');
+  }
+  salvar();limparForm();nav('lista');
+}
+
+// ===== EDITAR / STATUS =====
+function editarProd(id) {
+  openModal('Confirmar Edicao','Digite sua senha para editar o produto.',function(){
+    var p=null;
+    for(var i=0;i<produtos.length;i++){if(produtos[i].id===id){p=produtos[i];break;}}
+    if(!p)return;
+    // Primeiro popular selects, depois navegar
+    atualizarSelects();
+    // Mostrar a page diretamente
+    document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.si').forEach(function(x){x.classList.remove('active');});
+    document.getElementById('pg-produto').classList.add('active');
+    document.getElementById('mn-produto').classList.add('active');
+    document.getElementById('breadcrumb').innerHTML='Cadastros / <span>Cadastro de Produtos</span>';
+    // Preencher form
+    document.getElementById('editId').value=id;
+    document.getElementById('fTit').textContent='Editando Produto #'+id;
+    document.getElementById('btnSalvar').textContent='Atualizar produto';
+    document.getElementById('iNome').value=p.nome||'';
+    document.getElementById('iNCM').value=p.ncm||'';
+    document.getElementById('iCEST').value=p.cest||'';
+    document.getElementById('iCor').value=p.cor||'';
+    document.getElementById('iValor').value=p.valor||'';
+    document.getElementById('oProdId').value=p.id;
+    document.getElementById('oIB').style.display='inline-block';
+    document.getElementById('oCod').value=p.codigo||'';
+    document.getElementById('oCB').style.display='inline-block';
+    document.getElementById('oBar').value=p.barras||'';
+    document.getElementById('oBB').style.display=p.barras?'inline-block':'none';
+    var mapa={sTipo:'tipo',sOrigem:'origem',sProc:'proc',sUnid:'unidade',sGar:'garantia',sCom:'comissao',sFam:'familia',sMV:'marcaVeic',sMP:'marcaProd'};
+    for(var sel in mapa){
+      var el=document.getElementById(sel);
+      if(el&&p[mapa[sel]]) el.value=p[mapa[sel]];
+    }
+    if(p.familia){
+      carregarSubs();
+      if(p.subfamilia) document.getElementById('sSub').value=p.subfamilia;
+    }
+    veics=p.veicsArr?p.veicsArr.map(function(x){return Object.assign({},x);}):[];
+    renderVeics();
+    preencherAnos();
+    document.querySelector('.content').scrollTop=0;
+    toast('Produto carregado para edicao!');
+  });
+}
+
+
+function toggleStatus(id) {
+  var p=null;
+  for(var i=0;i<produtos.length;i++){if(produtos[i].id===id){p=produtos[i];break;}}
+  if(!p)return;
+  var acao=p.status==='ATIVO'?'Inativar':'Ativar';
+  openModal(acao+' Produto','Digite sua senha para '+acao.toLowerCase()+' este produto.',function(){
+    // Mudar status diretamente
+    for(var i=0;i<produtos.length;i++){
+      if(produtos[i].id===id){
+        produtos[i].status=produtos[i].status==='ATIVO'?'INATIVO':'ATIVO';
+        p=produtos[i];
+        break;
+      }
+    }
+    salvar();
+    // Atualizar tabela se estiver na lista
+    var pgLista=document.getElementById('pg-lista');
+    if(pgLista&&pgLista.classList.contains('active')) buscar();
+    // Atualizar ficha se estiver aberta
+    if(fichaId===id) atualizarFicha(p);
+    toast('Produto '+(p.status==='ATIVO'?'ativado!':'inativado!'));
+  });
+}
+
+
+// ===== FICHA TECNICA =====
+function abrirFicha(id) {
+  var p=null;
+  for(var i=0;i<produtos.length;i++){if(produtos[i].id===id){p=produtos[i];break;}}
+  if(!p)return;
+  fichaId=id;
+  nav('ficha');
+  atualizarFicha(p);
+}
+
+function atualizarFicha(p) {
+  document.getElementById('fichaTit').textContent='#'+p.id+' - '+p.nome;
+  var sb=document.getElementById('fichaStBtn');
+  sb.textContent=p.status==='ATIVO'?'Inativar':'Ativar';
+  sb.style.background=p.status==='ATIVO'?'#ef4444':'#16a34a';
+  var campos=[
+    ['ID','#'+p.id],['Codigo',p.codigo],['Status','<span class="'+(p.status==='ATIVO'?'ba':'bi')+'" style="font-size:12px">'+p.status+'</span>'],
+    ['Tipo',p.tipo||'-'],['Origem',p.origem||'-'],['Procedencia',p.proc||'-'],
+    ['Unidade',p.unidade||'-'],['Familia',p.familia||'-'],['Subfamilia',p.subfamilia||'-'],
+    ['Marca Veiculo',p.marcaVeic||'-'],['Marca Produto',p.marcaProd||'-'],['Cor',p.cor||'-'],
+    ['Garantia',p.garantia||'-'],['Comissao',p.comissao||'-'],['Valor',p.valor?'R$ '+p.valor.toFixed(2).replace('.',','):'-'],
+    ['NCM',p.ncm||'-'],['CEST',p.cest||'-'],['Endereco',p.endereco||'-']
+  ];
+  document.getElementById('fichaGrid').innerHTML=campos.map(function(c){
+    return '<div class="ficha-campo"><div class="ficha-campo-label">'+c[0]+'</div><div class="ficha-campo-val">'+c[1]+'</div></div>';
+  }).join('');
+  var varr=p.veicsArr||[];
+  document.getElementById('fichaVeics').innerHTML=varr.length
+    ?varr.map(function(v){return '<div style="padding:6px 0;border-bottom:1px solid #f3f4f6;font-size:13px">&#128664; '+v.nome+(v.periodo?' <span style="color:#9ca3af">'+v.periodo+'</span>':'')+'</div>';}).join('')
+    :'<div style="color:#9ca3af;font-size:13px">Nenhum veiculo cadastrado</div>';
+  document.getElementById('fichaCods').innerHTML=
+    '<div style="margin-bottom:10px"><div class="ficha-campo-label">ID</div><div style="font-size:14px;font-weight:600;color:#16a34a">#'+p.id+'</div></div>'+
+    '<div style="margin-bottom:10px"><div class="ficha-campo-label">Codigo da Peca</div><div style="font-size:15px;font-weight:700;color:#2563eb">'+p.codigo+'</div></div>'+
+    '<div><div class="ficha-campo-label">Codigo de Barras</div><div style="font-size:13px;font-family:monospace">'+( p.barras||'-')+'</div></div>';
+}
+
+function editarDaFicha() {
+  if(fichaId) editarProd(fichaId);
+}
+
+function excluirDaFicha() {
+  if(!fichaId) return;
+  var p = null;
+  for(var i=0;i<produtos.length;i++){if(produtos[i].id===fichaId){p=produtos[i];break;}}
+  if(!p) return;
+  openModal('Excluir Produto','ATENCAO: Digite sua senha para EXCLUIR permanentemente "'+p.nome+'".', function(){
+    produtos = produtos.filter(function(x){return x.id!==fichaId;});
+    salvar();
+    toast('Produto excluido!');
+    fichaId = null;
+    nav('lista');
+  });
+}
+
+function toggleStFicha() {
+  if(fichaId) toggleStatus(fichaId);
+}
+
+function atualizarBtnFichaStatus(p){
+  var sb=document.getElementById('fichaStBtn');
+  if(!sb) return;
+  sb.textContent=p.status==='ATIVO'?'Inativar':'Ativar';
+  sb.style.background=p.status==='ATIVO'?'#ef4444':'#16a34a';
+}
+
+// ===== BUSCA PRODUTOS =====
+function buscar() {
+  var nome=(document.getElementById('fNome').value||'').trim().toLowerCase();
+  var cod=(document.getElementById('fCod').value||'').trim().toLowerCase();
+  var bar=(document.getElementById('fBar').value||'').trim().toLowerCase();
+  var end=(document.getElementById('fEnd').value||'').trim().toLowerCase();
+  var fam=document.getElementById('fFam').value;
+  var marca=(document.getElementById('fMarca')||{}).value||'';
+  var modelo=(document.getElementById('fModelo')||{}).value||'';
+  var lista=produtos.filter(function(p){
+    if(nome&&p.nome.toLowerCase().indexOf(nome)<0&&p.codigo.toLowerCase().indexOf(nome)<0) return false;
+    if(cod&&p.codigo.toLowerCase().indexOf(cod)<0) return false;
+    if(bar&&(p.barras||'').toLowerCase().indexOf(bar)<0) return false;
+    if(end&&(p.endereco||'').toLowerCase().indexOf(end)<0) return false;
+    if(fam&&p.familia!==fam) return false;
+    if(marca&&(p.marcaVeic||'').toLowerCase().indexOf(marca.toLowerCase())<0) return false;
+    if(modelo&&(p.veiculos||'').toLowerCase().indexOf(modelo.toLowerCase())<0) return false;
+    return true;
+  });
+  document.getElementById('tTotal').textContent=lista.length+' resultado(s)';
+  var tbody=document.getElementById('tBody');
+  if(lista.length===0){
+    tbody.innerHTML='<tr><td colspan="10" style="padding:40px;text-align:center;color:#9ca3af">Nenhum produto encontrado. <a href="#" onclick="nav(\'produto\');return false;" style="color:#2563eb">Cadastrar produto</a></td></tr>';
+    return;
+  }
+  tbody.innerHTML=lista.map(function(p){
+    var valorStr=p.valor?'R$ '+p.valor.toFixed(2).replace('.',','):'-';
+    var corTag=p.cor?'<span class="cor-tag">'+p.cor+'</span>':'';
+    return '<tr>'+
+      '<td><span class="qtd">'+p.qtd+'</span></td>'+
+      '<td style="font-weight:600;color:#6b7280">#'+p.id+'</td>'+
+      '<td><span class="cod-link" onclick="abrirFicha(\''+p.id+'\')">'+p.codigo+'</span></td>'+
+      '<td><div style="font-weight:500">'+p.nome+corTag+'</div>'+(p.veiculos?'<div style="font-size:11px;color:#9ca3af;margin-top:2px">'+p.veiculos+'</div>':'')+'</td>'+
+      '<td>'+(p.familia||'-')+(p.subfamilia?'<div style="font-size:11px;color:#9ca3af">'+p.subfamilia+'</div>':'')+'</td>'+
+      '<td>'+(p.marcaVeic?'<div style="font-size:12px;font-weight:500">&#128664; '+p.marcaVeic+'</div>':'')+(p.marcaProd?'<div style="font-size:12px;color:#6b7280">&#127991; '+p.marcaProd+'</div>':'')+'</td>'+
+      '<td class="vcl">'+valorStr+'</td>'+
+      '<td>'+(p.endereco?'<span class="be">'+p.endereco+'</span>':'-')+'</td>'+
+      '<td><span class="'+(p.status==='ATIVO'?'ba':'bi')+'">'+p.status+'</span></td>'+
+      '<td>'+
+        '<div class="dd-wrap">'+
+          '<button class="dd-btn" onclick="toggleDD(this)">Ações</button>'+
+          '<div class="dd-menu">'+
+            '<a onclick="abrirFicha(\''+p.id+'\');closeDD()">📋 Ver Ficha</a>'+
+            '<a onclick="editarProd(\''+p.id+'\');closeDD()">✏️ Editar</a>'+
+            '<a class="red" onclick="toggleStatus(\''+p.id+'\');closeDD()">'+(p.status==='ATIVO'?'🔴 Inativar':'🟢 Ativar')+'</a>'+
+          '</div>'+
+        '</div>'+
+      '</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function toggleVeic() {
+  veicVisivel=!veicVisivel;
+  document.getElementById('vbox').style.display=veicVisivel?'block':'none';
+  document.getElementById('btnEsc').textContent=veicVisivel?'Esconder Veiculo':'Mostrar Veiculo';
+}
+
+function carregarModelosFiltro() {
+  var marca=document.getElementById('fMarca').value;
+  var sel=document.getElementById('fModelo');
+  var mods=modelosPorMarca[marca]||[];
+  sel.innerHTML='<option value="">Todos os modelos</option>'+mods.map(function(m){return '<option>'+m+'</option>';}).join('');
+}
+
+// ===== ROMANEIO =====
+var romaneios=[
+  {id:248,motorista:'CLEBER ALEXANDRE FERREIRA',veiculo:'MESTRE FURGAO L1H1 BRANCO EIB1D01',status:'Aguardando Entrega',data:'04/09/2024'},
+  {id:249,motorista:'CLEBER ALEXANDRE FERREIRA',veiculo:'MESTRE FURGAO L1H1 BRANCO EIB1D01',status:'Aguardando Entrega',data:'04/09/2024'},
+  {id:265,motorista:'CLEBER ALEXANDRE FERREIRA',veiculo:'MESTRE FURGAO L1 BRANCA SUS8B88',status:'Aguardando Entrega',data:'10/09/2024'},
+  {id:280,motorista:'CLEBER ALEXANDRE FERREIRA',veiculo:'MESTRE FURGAO L1H1 BRANCO EIB1D01',status:'Entregue',data:'12/09/2024'},
+  {id:286,motorista:'CLEBER ALEXANDRE FERREIRA',veiculo:'MESTRE FURGAO L1 BRANCA SUS8B88',status:'Entregue',data:'13/09/2024'}
+];
+var romFilt=romaneios.slice();
+
+function filtrarRom() {
+  var st=document.getElementById('romSt').value;
+  romFilt=romaneios.filter(function(d){
+    if(st==='ent') return d.status==='Entregue';
+    if(st==='nao') return d.status==='Aguardando Entrega';
+    return true;
+  });
+  renderRom();
+}
+
+function renderRom() {
+  var busca=(document.getElementById('romBusca').value||'').toLowerCase();
+  var pp=parseInt(document.getElementById('romPP').value);
+  var lista=romFilt.filter(function(d){
+    return String(d.id).indexOf(busca)>=0||d.motorista.toLowerCase().indexOf(busca)>=0||d.status.toLowerCase().indexOf(busca)>=0;
+  }).slice(0,pp);
+  document.getElementById('romBody').innerHTML=lista.map(function(d){
+    return '<tr><td>'+d.id+'</td><td>'+d.motorista+'</td><td>'+d.veiculo+'</td>'+
+      '<td><span class="'+(d.status==='Entregue'?'bent':'bag')+'">'+d.status+'</span></td>'+
+      '<td>'+d.data+'</td><td><button class="btn-al">Alter</button></td></tr>';
+  }).join('');
+}
+
+function toast(msg) {
+  var t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='block';
+  setTimeout(function(){t.style.display='none';},3500);
+}
+
+// ===== RECEBIMENTOS =====
+var recebimentos = [];
+var recebEditandoIdx = -1;
+
+// Dados do Excel pre-carregados
+var recebBase = [{"mes":"marco","dtPed":"2026-03-10","nPed":"33656","dias":1,"dtRec":"2026-03-11","forn":"RISO","nf":"7442","vol":23,"recPor":"DEIVISON","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":404.3,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-11","nPed":"33671","dias":1,"dtRec":"2026-03-12","forn":"AUDIO PARTS","nf":"195437","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":393.55,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-10","nPed":"33645","dias":2,"dtRec":"2026-03-12","forn":"LEAN E MATH COMERCIO","nf":"22090","vol":4,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2355.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-12","nPed":"33677","dias":0,"dtRec":"2026-03-12","forn":"BUGATTI","nf":"19026","vol":125,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5446.44,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-11","nPed":"33676","dias":1,"dtRec":"2026-03-12","forn":"NOVA FILMS","nf":"70769","vol":2,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":935.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-12","nPed":"33689","dias":1,"dtRec":"2026-03-13","forn":"AUDIO PARTS","nf":"195497","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":917.41,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-12","nPed":"33686","dias":1,"dtRec":"2026-03-13","forn":"AUDIO PARTS","nf":"195496","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":914.59,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-12","nPed":"33685","dias":1,"dtRec":"2026-03-13","forn":"NOVA FILMS","nf":"70920","vol":2,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":680.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-12","nPed":"33687","dias":1,"dtRec":"2026-03-13","forn":"BIGUÁ","nf":"681703","vol":6,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1314.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-13","nPed":"33702","dias":0,"dtRec":"2026-03-13","forn":"EXCELLENCE","nf":"2180","vol":7,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":6907.9,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-16","nPed":"33727","dias":0,"dtRec":"2026-03-16","forn":"AUDIO PARTS","nf":"195597","vol":4,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1041.58,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-13","nPed":"33715","dias":3,"dtRec":"2026-03-16","forn":"AUDIO PARTS","nf":"195563","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1632.17,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-13","nPed":"33707","dias":4,"dtRec":"2026-03-17","forn":"EXCELLENCE","nf":"2193","vol":10,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5426.9,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-16","nPed":"33733","dias":1,"dtRec":"2026-03-17","forn":"VIDROFILM","nf":"64949","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":5800.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-18","nPed":"33820","dias":0,"dtRec":"2026-03-18","forn":"ROCKFILME","nf":"73","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":5900.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-10","nPed":"33646","dias":8,"dtRec":"2026-03-18","forn":"NOVA FILMS","nf":"71360","vol":2,"recPor":"SILVANA","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":931.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-19","nPed":"34100","dias":0,"dtRec":"2026-03-19","forn":"AUDIO PARTS","nf":"195812","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":857.17,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-18","nPed":"34049","dias":1,"dtRec":"2026-03-19","forn":"FILM IN","nf":"21092","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1770.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-13","nPed":"33713","dias":6,"dtRec":"2026-03-19","forn":"FILM IN","nf":"21086","vol":8,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":17399.4,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-19","nPed":"34052","dias":1,"dtRec":"2026-03-20","forn":"NOVA FILMS","nf":"71602","vol":4,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1943.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-19","nPed":"34167","dias":1,"dtRec":"2026-03-20","forn":"NOVA FILMS","nf":"71623","vol":1,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":190.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-19","nPed":"34166","dias":1,"dtRec":"2026-03-20","forn":"BUGATTI","nf":"19061","vol":115,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5085.07,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-20","nPed":"34196","dias":3,"dtRec":"2026-03-23","forn":"AUDIO PARTS","nf":"195898","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":782.89,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-02-18","nPed":"33143","dias":33,"dtRec":"2026-03-23","forn":"KITOPLASTIC","nf":"3520","vol":2,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1890.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-23","nPed":"34499","dias":1,"dtRec":"2026-03-24","forn":"AUDIO PARTS","nf":"196007","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":259.88,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-11","nPed":"33675","dias":13,"dtRec":"2026-03-24","forn":"COMERCIAL AMERICA","nf":"6165","vol":5,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":3040.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-10","nPed":"33643","dias":16,"dtRec":"2026-03-26","forn":"KITOPLASTIC","nf":"3666","vol":9,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":14023.9,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-25","nPed":"34573","dias":1,"dtRec":"2026-03-26","forn":"KITOPLASTIC","nf":"3923","vol":2,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2700.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-23","nPed":"34496","dias":3,"dtRec":"2026-03-26","forn":"JEEP BALILLA","nf":"60250","vol":2,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":17969.71,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-26","nPed":"34614","dias":0,"dtRec":"2026-03-26","forn":"DISTRIDET","nf":"13286","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":840.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-26","nPed":"34590","dias":0,"dtRec":"2026-03-26","forn":"AUDIO PARTS","nf":"196152","vol":6,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":4229.47,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-26","nPed":"34619","dias":0,"dtRec":"2026-03-26","forn":"EXCELLENCE","nf":"2237","vol":28,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":830.76,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-26","nPed":"34611","dias":0,"dtRec":"2026-03-26","forn":"EXCELLENCE","nf":"2236","vol":3,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":1768.8,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-04-24","nPed":"35245","dias":-29,"dtRec":"2026-03-26","forn":"GERMANICA MOGI MIRIM","nf":"16983","vol":2,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":20908.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-11","nPed":"33673","dias":15,"dtRec":"2026-03-26","forn":"COMERCIAL AMERICA","nf":"17345","vol":7,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":3703.6,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-26","nPed":"34613","dias":1,"dtRec":"2026-03-27","forn":"RENOVE","nf":"10695","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":1032.6,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-25","nPed":"34551","dias":2,"dtRec":"2026-03-27","forn":"RENOVE","nf":"10694","vol":4,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3930.7,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-26","nPed":"34627","dias":1,"dtRec":"2026-03-27","forn":"AUDIO PARTS","nf":"196214","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":199.9,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-25","nPed":"34566","dias":2,"dtRec":"2026-03-27","forn":"DANFAB","nf":"557644","vol":10,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1582.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-26","nPed":"34607","dias":1,"dtRec":"2026-03-27","forn":"NOVA FILMS","nf":"72196","vol":4,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1840.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-27","nPed":"34644","dias":0,"dtRec":"2026-03-27","forn":"AUDIO PARTS","nf":"196246","vol":3,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1530.35,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-26","nPed":"34621","dias":1,"dtRec":"2026-03-27","forn":"RISO","nf":"7506","vol":16,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":1118.4,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-27","nPed":"34647","dias":3,"dtRec":"2026-03-30","forn":"NOVA FILMS","nf":"72445","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1137.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-24","nPed":"34542","dias":6,"dtRec":"2026-03-30","forn":"F.H RODRIGUES","nf":"7757","vol":10,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2980.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-30","nPed":"34664","dias":0,"dtRec":"2026-03-30","forn":"AUDIO PARTS","nf":"196289","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":112.15,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-30","nPed":"34692","dias":1,"dtRec":"2026-03-31","forn":"AUDIO PARTS","nf":"196347","vol":7,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":3760.5,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-05-04","nPed":"35375","dias":-34,"dtRec":"2026-03-31","forn":"APIA","nf":"235935","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":41530.0,"status":"OK","obs":""},{"mes":"marco","dtPed":"2026-03-30","nPed":"34691","dias":1,"dtRec":"2026-03-31","forn":"RAJ TECNOLOGIA","nf":"5414","vol":6,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2582.92,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-31","nPed":"34694","dias":1,"dtRec":"2026-04-01","forn":"AUDIO PARTS","nf":"196392","vol":14,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":17046.3,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-31","nPed":"34721","dias":1,"dtRec":"2026-04-01","forn":"AUDIO PARTS","nf":"196390","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":441.24,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-31","nPed":"34736","dias":1,"dtRec":"2026-04-01","forn":"AUDIO PARTS","nf":"196419","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":230.56,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-01","nPed":"34751","dias":0,"dtRec":"2026-04-01","forn":"EXCELLENCE","nf":"2263","vol":1,"recPor":"GABRIEL","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":799.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-31","nPed":"34727","dias":1,"dtRec":"2026-04-01","forn":"BIGUA DISTRIBUIDORA","nf":"684763","vol":5,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":3534.99,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-31","nPed":"34735","dias":1,"dtRec":"2026-04-01","forn":"COMERCIAL LIBERATO","nf":"443669","vol":3,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":539.31,"status":"OK","obs":""},{"mes":"abril","dtPed":"","nPed":"","dias":"","dtRec":"2026-04-01","forn":"FIAT VALVERDE","nf":"62103","vol":8,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":60247.44,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-01","nPed":"34803","dias":1,"dtRec":"2026-04-02","forn":"RISO","nf":"7518","vol":3,"recPor":"GABRIEL","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":387.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-02","nPed":"34829","dias":0,"dtRec":"2026-04-02","forn":"AUDIO PARTS","nf":"196508","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1073.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-01","nPed":"34793","dias":1,"dtRec":"2026-04-02","forn":"BUGATTI","nf":"19317","vol":115,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5085.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-01","nPed":"34794","dias":1,"dtRec":"2026-04-02","forn":"GERMANICA POÇOS","nf":"6343","vol":4,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":3900.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-02","nPed":"34812","dias":4,"dtRec":"2026-04-06","forn":"L.M ARAUJO","nf":"113108","vol":3,"recPor":"GABRIEL","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":862.3,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-02","nPed":"34828","dias":4,"dtRec":"2026-04-06","forn":"NOVA FILMS","nf":"73009","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1300.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-06","nPed":"34854","dias":1,"dtRec":"2026-04-07","forn":"AUDIO PARTS","nf":"196613","vol":6,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1834.2,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-07","nPed":"34857","dias":0,"dtRec":"2026-04-07","forn":"EXCELLENCE","nf":"2285","vol":5,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":399.5,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-27","nPed":"34643","dias":11,"dtRec":"2026-04-07","forn":"ELITE AÇO","nf":"99433","vol":2,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1168.8,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-07","nPed":"34865","dias":0,"dtRec":"2026-04-07","forn":"AUDIO PARTS","nf":"196651","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":5307.24,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-02","nPed":"34840","dias":5,"dtRec":"2026-04-07","forn":"FILM IN","nf":"21309","vol":4,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":19022.36,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-07","nPed":"34878","dias":1,"dtRec":"2026-04-08","forn":"AUDIO PARTS","nf":"196681","vol":5,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2009.78,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-24","nPed":"34539","dias":15,"dtRec":"2026-04-08","forn":"ALCANCE","nf":"2175","vol":4,"recPor":"HUGO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3603.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-06","nPed":"34851","dias":2,"dtRec":"2026-04-08","forn":"BIGUA DISTRIBUIDORA","nf":"685490","vol":4,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1856.27,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-07","nPed":"34868","dias":1,"dtRec":"2026-04-08","forn":"SEGVEL","nf":"33572","vol":8,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":63311.9,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-25","nPed":"34559","dias":14,"dtRec":"2026-04-08","forn":"FIAT VALVERDE","nf":"63534","vol":3,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":25882.72,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-31","nPed":"34730","dias":8,"dtRec":"2026-04-08","forn":"NOVA FILMS","nf":"73314","vol":1,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":90.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"","nPed":"","dias":"","dtRec":"2026-04-09","forn":"AUDIO PARTS","nf":"196747","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":734.68,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-09","nPed":"34984","dias":0,"dtRec":"2026-04-09","forn":"VIDROFILM","nf":"65234","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":10200.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-23","nPed":"34495","dias":17,"dtRec":"2026-04-09","forn":"COMERCIAL AMERICA","nf":"17421","vol":2,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":15454.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-08","nPed":"34974","dias":1,"dtRec":"2026-04-09","forn":"KITOPLASTIC","nf":"4933","vol":1,"recPor":"VLADIMIR","tipoRec":"COLETA","tipoEnt":"VENDA","valor":1350.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-08","nPed":"34975","dias":1,"dtRec":"2026-04-09","forn":"KITOPLASTIC","nf":"4795","vol":8,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":12030.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-09","nPed":"34990","dias":0,"dtRec":"2026-04-09","forn":"DANFAB","nf":"558889","vol":10,"recPor":"VLADIMIR","tipoRec":"COLETA","tipoEnt":"VENDA","valor":1510.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-06","nPed":"4279","dias":3,"dtRec":"2026-04-09","forn":"LIDIA DE CASTRO","nf":"167","vol":5,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1800.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-01","nPed":"34802","dias":9,"dtRec":"2026-04-10","forn":"ALCANCE CURITIBA","nf":"2179","vol":3,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3872.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-10","nPed":"35024","dias":0,"dtRec":"2026-04-10","forn":"KITOPLASTIC","nf":"5000","vol":1,"recPor":"ADRIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1350.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-08","nPed":"34940","dias":2,"dtRec":"2026-04-10","forn":"BUGATTI","nf":"19354","vol":115,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5085.07,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-07","nPed":"34858","dias":3,"dtRec":"2026-04-10","forn":"F.H RODRIGUES","nf":"7784","vol":30,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2235.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-10","nPed":"35030","dias":0,"dtRec":"2026-04-10","forn":"EXCELLENCE","nf":"2300","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":336.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"","nPed":"","dias":"","dtRec":"2026-04-13","forn":"ACFILM","nf":"12588","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2175.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-13","nPed":"35043","dias":0,"dtRec":"2026-04-13","forn":"KITOPLASTIC","nf":"4995","vol":4,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":5670.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-13","nPed":"35035","dias":0,"dtRec":"2026-04-13","forn":"ACFILM","nf":"8819","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":4350.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-13","nPed":"35040","dias":0,"dtRec":"2026-04-13","forn":"AUDIO PARTS","nf":"196874","vol":1,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1224.6,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-13","nPed":"35051","dias":1,"dtRec":"2026-04-14","forn":"AUDIO PARTS","nf":"196902","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":484.22,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-13","nPed":"35044","dias":1,"dtRec":"2026-04-14","forn":"BIGUA DISTRIBUIDORA","nf":"686398","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1896.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-13","nPed":"35050","dias":1,"dtRec":"2026-04-14","forn":"NOVA FILMS","nf":"73982","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1074.15,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-14","nPed":"35074","dias":0,"dtRec":"2026-04-14","forn":"AUDIO PARTS","nf":"196953","vol":4,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1283.65,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-07","nPed":"34869","dias":7,"dtRec":"2026-04-14","forn":"LEAN E MATH COMERCIO","nf":"22347","vol":30,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":17862.5,"status":"OK","obs":""},{"mes":"abril","dtPed":"","nPed":"","dias":"","dtRec":"2026-04-15","forn":"NOVA FILMS","nf":"17190","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":205.15,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-14","nPed":"35080","dias":1,"dtRec":"2026-04-15","forn":"AUDIO PARTS","nf":"197031","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":716.81,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-13","nPed":"35067","dias":2,"dtRec":"2026-04-15","forn":"RISO","nf":"7556","vol":14,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":455.15,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-14","nPed":"35079","dias":1,"dtRec":"2026-04-15","forn":"RISO","nf":"7555","vol":5,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":450.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-08","nPed":"4288","dias":8,"dtRec":"2026-04-16","forn":"LIDIA DE CASTRO","nf":"168","vol":4,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2400.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-08","nPed":"4284","dias":8,"dtRec":"2026-04-16","forn":"LIDIA DE CASTRO","nf":"169","vol":7,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2550.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-13","nPed":"35068","dias":3,"dtRec":"2026-04-16","forn":"FILM IN","nf":"21451","vol":8,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":37610.74,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-16","nPed":"35130","dias":0,"dtRec":"2026-04-16","forn":"RENATA L.M","nf":"113430","vol":1,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":580.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-25","nPed":"34552","dias":22,"dtRec":"2026-04-16","forn":"IMPERIA","nf":"112803","vol":4,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":7459.6,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-18","nPed":"33779","dias":29,"dtRec":"2026-04-16","forn":"IMPERIA","nf":"112802","vol":1,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":1946.95,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-17","nPed":"35145","dias":0,"dtRec":"2026-04-17","forn":"AUDIO PARTS","nf":"197198","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":180.98,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-15","nPed":"35118","dias":2,"dtRec":"2026-04-17","forn":"BUGATTI","nf":"19373","vol":79,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3464.04,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-17","nPed":"35154","dias":0,"dtRec":"2026-04-17","forn":"LEAN E MATH COMERCIO","nf":"22376","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1766.25,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-20","nPed":"35180","dias":2,"dtRec":"2026-04-22","forn":"AUDIO PARTS","nf":"197302","vol":5,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1690.85,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-23","nPed":"35220","dias":0,"dtRec":"2026-04-23","forn":"AUDIO PARTS","nf":"197407","vol":3,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":613.65,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-16","nPed":"35127","dias":7,"dtRec":"2026-04-23","forn":"RENOVE","nf":"10707","vol":5,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":4122.82,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-16","nPed":"35132","dias":7,"dtRec":"2026-04-23","forn":"AUTOAMERICA","nf":"271718","vol":24,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3978.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-08","nPed":"34944","dias":16,"dtRec":"2026-04-24","forn":"NOVA FILMS","nf":"74875","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":330.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-24","nPed":"35238","dias":0,"dtRec":"2026-04-24","forn":"EXCELLENCE","nf":"2374","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":442.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-23","nPed":"35232","dias":1,"dtRec":"2026-04-24","forn":"RISO","nf":"7583","vol":5,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":452.55,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-23","nPed":"35229","dias":1,"dtRec":"2026-04-24","forn":"RISO","nf":"7582","vol":5,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":445.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-23","nPed":"35219","dias":1,"dtRec":"2026-04-24","forn":"BUGATTI","nf":"19462","vol":90,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3923.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-20","nPed":"35178","dias":4,"dtRec":"2026-04-24","forn":"COMERCIAL LIBERATO","nf":"445031","vol":13,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":22750.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"","nPed":"","dias":"","dtRec":"2026-04-27","forn":"TOLI","nf":"1301","vol":1,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":387.45,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-27","nPed":"35294","dias":0,"dtRec":"2026-04-27","forn":"KITOPLASTIC","nf":"5418","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":3054.1,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-28","nPed":"35302","dias":0,"dtRec":"2026-04-28","forn":"KITOPLASTIC","nf":"5396","vol":3,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1890.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-24","nPed":"35251","dias":3,"dtRec":"2026-04-27","forn":"AUDIO PARTS","nf":"197528","vol":6,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1744.67,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-03-31","nPed":"34738","dias":27,"dtRec":"2026-04-27","forn":"JEEP BALILLA","nf":"60747","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1570.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-27","nPed":"35266","dias":0,"dtRec":"2026-04-27","forn":"AUDIO PARTS","nf":"197559","vol":15,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":9102.86,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-24","nPed":"35242","dias":3,"dtRec":"2026-04-27","forn":"FILM IN","nf":"21555","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2959.99,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-27","nPed":"35252","dias":1,"dtRec":"2026-04-28","forn":"CAMI COMERCIO","nf":"14473","vol":10,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1069.9,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-28","nPed":"35313","dias":0,"dtRec":"2026-04-28","forn":"RISO","nf":"7602","vol":5,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":432.5,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-27","nPed":"35281","dias":1,"dtRec":"2026-04-28","forn":"NZB COMERCIO","nf":"293110","vol":4,"recPor":"VLADIMIR","tipoRec":"COLETA","tipoEnt":"VENDA","valor":314.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-27","nPed":"35253","dias":2,"dtRec":"2026-04-29","forn":"TUBETRON","nf":"1179","vol":20,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":816.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-28","nPed":"35313","dias":1,"dtRec":"2026-04-29","forn":"RISO","nf":"7602","vol":5,"recPor":"DEIVISON","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":432.5,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-27","nPed":"35262","dias":2,"dtRec":"2026-04-29","forn":"RISO","nf":"7604","vol":5,"recPor":"DEIVISON","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":150.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-29","nPed":"35317","dias":0,"dtRec":"2026-04-29","forn":"AUDIO PARTS","nf":"197754","vol":4,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1920.52,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-28","nPed":"35307","dias":1,"dtRec":"2026-04-29","forn":"BIGUA DISTRIBUIDORA","nf":"688698","vol":6,"recPor":"DEIVISON","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2619.41,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-20","nPed":"35179","dias":9,"dtRec":"2026-04-29","forn":"COMERCIAL LIBERATO","nf":"445569","vol":4,"recPor":"LUCAS","tipoRec":"COLETA","tipoEnt":"VENDA","valor":3439.96,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-29","nPed":"35326","dias":1,"dtRec":"2026-04-30","forn":"RENATA L.M","nf":"113659","vol":4,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":924.3,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-23","nPed":"35234 ","dias":7,"dtRec":"2026-04-30","forn":"ETIBAND","nf":"44097","vol":4,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":3410.0,"status":"OK","obs":""},{"mes":"abril","dtPed":"2026-04-29","nPed":"35335","dias":1,"dtRec":"2026-04-30","forn":"EXCELLENCE","nf":"2392","vol":10,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":399.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-28","nPed":"35312","dias":4,"dtRec":"2026-05-02","forn":"BUGATTI","nf":"19614","vol":18,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"ESTETICA","valor":795.03,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-07","nPed":"34858","dias":27,"dtRec":"2026-05-04","forn":"F.H RODRIGUES","nf":"7797","vol":50,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":3725.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-28","nPed":"35312","dias":6,"dtRec":"2026-05-04","forn":"BUGATTI","nf":"19615","vol":87,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3722.16,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-30","nPed":"35357","dias":4,"dtRec":"2026-05-04","forn":"SEGVEL","nf":"33743","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":25838.1,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-27","nPed":"35263","dias":7,"dtRec":"2026-05-04","forn":"NOVA FILMS","nf":"76105","vol":2,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1480.0,"status":"DIVERGÊNCIA","obs":"FALTOU ITEM NO PEDIDO DE COMPRAS"},{"mes":"maio","dtPed":"2026-04-30","nPed":"35365","dias":4,"dtRec":"2026-05-04","forn":"NOVA FILMS","nf":"76116","vol":3,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2195.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-04","nPed":"35377","dias":1,"dtRec":"2026-05-05","forn":"AUDIO PARTS","nf":"197919","vol":3,"recPor":"DEIVISON","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1061.65,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-29","nPed":"35327","dias":5,"dtRec":"2026-05-04","forn":"RENOVE","nf":"10736","vol":5,"recPor":"VLADIMIR","tipoRec":"COLETA","tipoEnt":"ESTETICA","valor":10127.01,"status":"OK","obs":"CONFERIDO POR INGRID"},{"mes":"maio","dtPed":"2026-05-05","nPed":"35390","dias":0,"dtRec":"2026-05-05","forn":"AUDIO PARTS","nf":"197966","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1316.57,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-04","nPed":"35383","dias":2,"dtRec":"2026-05-06","forn":"NOVA FILMS","nf":"76300","vol":1,"recPor":"DEIVISON","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":210.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-05","nPed":"35395","dias":1,"dtRec":"2026-05-06","forn":"RISO","nf":"7631","vol":5,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":432.5,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-24","nPed":"35248","dias":12,"dtRec":"2026-05-06","forn":"GERMANICA POÇOS","nf":"35248","vol":9,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":24305.4,"status":"OK","obs":"RECEBIDO SEM NOTA FISCAL"},{"mes":"maio","dtPed":"2026-05-06","nPed":"35409","dias":1,"dtRec":"2026-05-07","forn":"AUDIO PARTS","nf":"198067","vol":20,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":10600.59,"status":"DIVERGÊNCIA","obs":"FALTA ITEM FISICAMENTE"},{"mes":"maio","dtPed":"2026-05-06","nPed":"35412","dias":1,"dtRec":"2026-05-07","forn":"AUDIO PARTS","nf":"198064","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1642.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-06","nPed":"35415","dias":1,"dtRec":"2026-05-07","forn":"LEAN E MATH COMERCIO","nf":"22512","vol":4,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1940.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-06","nPed":"35404","dias":1,"dtRec":"2026-05-07","forn":"LEAN E MATH COMERCIO","nf":"22510","vol":16,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":9420.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-07","nPed":"35425","dias":0,"dtRec":"2026-05-07","forn":"AUDIO PARTS","nf":"198128","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":780.62,"status":"DIVERGÊNCIA","obs":"ITEM EM DESACORDO COM PEDIDO"},{"mes":"maio","dtPed":"2026-05-06","nPed":"35406","dias":1,"dtRec":"2026-05-07","forn":"FILM IN","nf":"21708","vol":6,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":12319.77,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-06","nPed":"35410","dias":1,"dtRec":"2026-05-07","forn":"NOVA FILMS","nf":"76646","vol":4,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":3168.0,"status":"DIVERGÊNCIA","obs":"ITEM EM DESACORDO COM PEDIDO"},{"mes":"maio","dtPed":"2026-05-06","nPed":"35411","dias":1,"dtRec":"2026-05-07","forn":"BIGUA DISTRIBUIDORA","nf":"689683","vol":4,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":3147.88,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-07","nPed":"35425","dias":0,"dtRec":"2026-05-07","forn":"AUDIO PARTS","nf":"198144","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":689.35,"status":"DIVERGÊNCIA","obs":"ITEM EM DESACORDO COM PEDIDO"},{"mes":"maio","dtPed":"2026-05-06","nPed":"35406","dias":1,"dtRec":"2026-05-07","forn":"FILM IN","nf":"21708","vol":6,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":12319.77,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-06","nPed":"35407","dias":1,"dtRec":"2026-05-07","forn":"FILM IN","nf":"21707","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":4200.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-07","nPed":"35441","dias":1,"dtRec":"2026-05-08","forn":"AUDIO PARTS","nf":"198173","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":5156.4,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-05","nPed":"35396","dias":3,"dtRec":"2026-05-08","forn":"BUGATTI","nf":"19625","vol":110,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5214.12,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-27","nPed":"35263","dias":11,"dtRec":"2026-05-08","forn":"NOVA FILMS","nf":"76773","vol":1,"recPor":"ROMUALDO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":135.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-06","nPed":"35408","dias":5,"dtRec":"2026-05-11","forn":"EXCELLENCE","nf":"2433","vol":16,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":9426.14,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-30","nPed":"35355","dias":11,"dtRec":"2026-05-11","forn":"JR DISTRIBUIDORA","nf":"108597","vol":1,"recPor":"HUGO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":7155.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-13","nPed":"35045","dias":28,"dtRec":"2026-05-11","forn":"NOVA FILMS","nf":"76843","vol":1,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1100.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-11","nPed":"35459","dias":1,"dtRec":"2026-05-12","forn":"AUDIO PARTS","nf":"198287","vol":4,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":871.36,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-11","nPed":"35465","dias":1,"dtRec":"2026-05-12","forn":"VIDROFILM","nf":"65672","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":9180.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-12","nPed":"35486","dias":1,"dtRec":"2026-05-13","forn":"AUDIO PARTS","nf":"198404","vol":1,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":107.91,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-27","nPed":"35283","dias":16,"dtRec":"2026-05-13","forn":"ALCANCE","nf":"2183","vol":4,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3589.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-08","nPed":"35447","dias":5,"dtRec":"2026-05-13","forn":"FIAMON","nf":"44040","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":5077.5,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-13","nPed":"35494","dias":0,"dtRec":"2026-05-13","forn":"EXCELLENCE","nf":"2446","vol":8,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2134.78,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-12","nPed":"35485","dias":1,"dtRec":"2026-05-13","forn":"POWERTEX","nf":"5268","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":1770.0,"status":"OK","obs":"RECEBIDO SEM NOTA FISCAL"},{"mes":"maio","dtPed":"2026-05-12","nPed":"35484","dias":1,"dtRec":"2026-05-13","forn":"POWERTEX","nf":"5267","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":1770.0,"status":"OK","obs":"RECEBIDO SEM NOTA FISCAL"},{"mes":"maio","dtPed":"2026-05-11","nPed":"35469","dias":2,"dtRec":"2026-05-13","forn":"NOVA FILMS","nf":"77080","vol":2,"recPor":"ANGELICA","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":310.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-13","nPed":"35501","dias":1,"dtRec":"2026-05-14","forn":"AUDIO PARTS","nf":"198471","vol":5,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1111.07,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-20","nPed":"35166","dias":24,"dtRec":"2026-05-14","forn":"F.H RODRIGUES","nf":"307","vol":40,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":5960.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-05","nPed":"35394","dias":9,"dtRec":"2026-05-14","forn":"KITOPLASTIC","nf":"7018","vol":11,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":16776.23,"status":"DIVERGÊNCIA","obs":"FALTA ITEM FISICAMENTE"},{"mes":"maio","dtPed":"2026-05-13","nPed":"35493","dias":1,"dtRec":"2026-05-14","forn":"RENOVE","nf":"10752","vol":8,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":4958.96,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-13","nPed":"35503","dias":1,"dtRec":"2026-05-14","forn":"AUDIO PARTS","nf":"198479","vol":1,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":377.06,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-11","nPed":"35470","dias":3,"dtRec":"2026-05-14","forn":"FILM IN","nf":"21747","vol":6,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":15339.5,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-06","nPed":"35400","dias":9,"dtRec":"2026-05-15","forn":"JR DISTRIBUIDORA","nf":"108607","vol":1,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":6678.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-12","nPed":"35481","dias":3,"dtRec":"2026-05-15","forn":"BUGATTI","nf":"19658","vol":139,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":19658.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-15","nPed":"35521","dias":0,"dtRec":"2026-05-15","forn":"LOJA DO MECANICO","nf":"35521","vol":2,"recPor":"ADRIAN","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":17.56,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-04-24","nPed":"35244","dias":21,"dtRec":"2026-05-15","forn":"FIAT VALVERDE","nf":"64624","vol":9,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":59606.16,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-21","nPed":"35684","dias":-6,"dtRec":"2026-05-15","forn":"SPCOM","nf":"55671","vol":1,"recPor":"GABRIEL","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1238.57,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-14","nPed":"35513","dias":4,"dtRec":"2026-05-18","forn":"CRISTIANO","nf":"5","vol":10,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":440.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-15","nPed":"35531","dias":3,"dtRec":"2026-05-18","forn":"ANHANGUERA FERRAMENTAS","nf":"590301","vol":5,"recPor":"ADRIAN","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":13494.05,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-15","nPed":"35520","dias":3,"dtRec":"2026-05-18","forn":"E RIBEIRO","nf":"70429","vol":1,"recPor":"ADRIAN","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":76.55,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-12","nPed":"35476","dias":6,"dtRec":"2026-05-18","forn":"SMART CHAVEIRO","nf":"35476","vol":5,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":275.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-18","nPed":"35546","dias":0,"dtRec":"2026-05-18","forn":"TOPLONAS","nf":"3012","vol":1,"recPor":"MARIANE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":569.4,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-18","nPed":"35553","dias":0,"dtRec":"2026-05-18","forn":"AUDIO PARTS","nf":"198606","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":508.41,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-18","nPed":"35559","dias":2,"dtRec":"2026-05-20","forn":"SEGVEL","nf":"33863","vol":12,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1266.04,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-19","nPed":"35597","dias":1,"dtRec":"2026-05-20","forn":"RISO","nf":"7675","vol":6,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":180.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-20","nPed":"35653","dias":0,"dtRec":"2026-05-20","forn":"AUDIO PARTS","nf":"198770","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":665.25,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-12","nPed":"35475","dias":9,"dtRec":"2026-05-21","forn":"ALCANCE","nf":"2192","vol":4,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":3361.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-20","nPed":"35654","dias":1,"dtRec":"2026-05-21","forn":"BIGUA DISTRIBUIDORA","nf":"691888","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2562.54,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-12","nPed":"35479","dias":9,"dtRec":"2026-05-21","forn":"AUTOAMERICA","nf":"278994","vol":21,"recPor":"INGRID","tipoRec":"COLETA","tipoEnt":"ESTETICA","valor":3615.26,"status":"OK","obs":"COLETA WLADIMIR"},{"mes":"maio","dtPed":"2026-05-21","nPed":"35704","dias":1,"dtRec":"2026-05-22","forn":"AUDIO PARTS","nf":"198863","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":937.06,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-20","nPed":"35606","dias":2,"dtRec":"2026-05-22","forn":"RENOVE","nf":"10768","vol":5,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":2584.29,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-21","nPed":"35703","dias":1,"dtRec":"2026-05-22","forn":"RENOVE","nf":"35703","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":72.96,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-19","nPed":"35596","dias":3,"dtRec":"2026-05-22","forn":"BUGATTI","nf":"19725","vol":125,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5446.44,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-20","nPed":"35611","dias":2,"dtRec":"2026-05-22","forn":"LEAN E MATH COMERCIO","nf":"22635","vol":20,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":11775.0,"status":"DIVERGÊNCIA","obs":"VEIO SEM BICOS"},{"mes":"maio","dtPed":"2026-05-19","nPed":"35569","dias":6,"dtRec":"2026-05-25","forn":"JR DISTRIBUIDORA","nf":"108621","vol":10,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":4770.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-25","nPed":"35783","dias":0,"dtRec":"2026-05-25","forn":"AUDIO PARTS","nf":"198972","vol":5,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2342.58,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-25","nPed":"35779","dias":1,"dtRec":"2026-05-26","forn":"RENATA L.M","nf":"114466","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":708.55,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-25","nPed":"35612/35799","dias":1,"dtRec":"2026-05-26","forn":"EXCELLENCE","nf":"2498","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":1375.2,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-25","nPed":"35782","dias":2,"dtRec":"2026-05-27","forn":"NOVA FILMS","nf":"78602","vol":1,"recPor":"GABRIEL","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":305.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-25","nPed":"35798","dias":2,"dtRec":"2026-05-27","forn":"DISTRIDET","nf":"13499","vol":4,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":1440.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-21","nPed":"35683","dias":6,"dtRec":"2026-05-27","forn":"SEGVEL","nf":"33906","vol":18,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":79804.98,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-14","nPed":"35504","dias":13,"dtRec":"2026-05-27","forn":"RISO","nf":"7708","vol":10,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":1982.08,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-27","nPed":"35842","dias":1,"dtRec":"2026-05-28","forn":"AUDIO PARTS","nf":"199195","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":915.5,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-25","nPed":"35800","dias":3,"dtRec":"2026-05-28","forn":"RENOVE","nf":"10776","vol":8,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":2307.64,"status":"DIVERGÊNCIA","obs":"FALTA ITEM FISICAMENTE"},{"mes":"maio","dtPed":"2026-05-27","nPed":"35818","dias":2,"dtRec":"2026-05-29","forn":"VIDROFILM","nf":"198673","vol":1,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":8100.0,"status":"DIVERGÊNCIA","obs":"SEM NOTA FISCAL"},{"mes":"maio","dtPed":"2026-05-27","nPed":"35845","dias":2,"dtRec":"2026-05-29","forn":"NOVA FILMS","nf":"78993","vol":1,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":190.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-28","nPed":"35861","dias":1,"dtRec":"2026-05-29","forn":"RENATA L.M","nf":"114545","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":634.8,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-27","nPed":"35844","dias":2,"dtRec":"2026-05-29","forn":"LEAN E MATH COMERCIO","nf":"22679","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2040.0,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-25","nPed":"35791","dias":4,"dtRec":"2026-05-29","forn":"BUGATTI","nf":"19884","vol":115,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":4981.81,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-29","nPed":"35889","dias":0,"dtRec":"2026-05-29","forn":"RISO","nf":"7722","vol":5,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":432.5,"status":"OK","obs":""},{"mes":"maio","dtPed":"2026-05-29","nPed":"35898","dias":0,"dtRec":"2026-05-29","forn":"KITOPLASTIC","nf":"7039","vol":1,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":557.56,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-05-20","nPed":"35673","dias":12,"dtRec":"2026-06-01","forn":"CARTONAGEM SAMAR","nf":"13262","vol":20,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":3276.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-05-29","nPed":"35902","dias":3,"dtRec":"2026-06-01","forn":"NOVA FILMS","nf":"79313","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1128.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-01","nPed":"35910","dias":0,"dtRec":"2026-06-01","forn":"SEGVEL COMERCIAL","nf":"33917","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":10900.17,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-05-29","nPed":"35903","dias":3,"dtRec":"2026-06-01","forn":"AUDIO PARTS","nf":"199359","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":427.48,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-05-28","nPed":"35856","dias":4,"dtRec":"2026-06-01","forn":"FILM IN","nf":"22024","vol":27,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":24510.36,"status":"DIVERGÊNCIA","obs":"FALTA ITEM FISICAMENTE"},{"mes":"junho","dtPed":"2026-06-02","nPed":"35923","dias":0,"dtRec":"2026-06-02","forn":"AUDIO PARTS","nf":"199476","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":813.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-02","nPed":"35936","dias":1,"dtRec":"2026-06-03","forn":"DISTRIDET","nf":"13528","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":1080.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-02","nPed":"35949","dias":1,"dtRec":"2026-06-03","forn":"RISO","nf":"7734","vol":11,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":985.76,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-03","nPed":"35971","dias":2,"dtRec":"2026-06-05","forn":"RENOVE","nf":"10786","vol":10,"recPor":"DEIVISON","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5696.9,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-05-29","nPed":"35890","dias":7,"dtRec":"2026-06-05","forn":"RISO","nf":"7738","vol":5,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":432.5,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-03","nPed":"35973","dias":2,"dtRec":"2026-06-05","forn":"EXCELLENCE","nf":"2550","vol":4,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":3760.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-03","nPed":"35972","dias":2,"dtRec":"2026-06-05","forn":"EXCELLENCE","nf":"2549","vol":5,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":2719.25,"status":"DIVERGÊNCIA","obs":"FALTA ITEM FISICAMENTE"},{"mes":"junho","dtPed":"2026-06-02","nPed":"35918","dias":3,"dtRec":"2026-06-05","forn":"BIGUA DISTRIBUIDORA","nf":"693874","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":525.35,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-02","nPed":"35924","dias":6,"dtRec":"2026-06-08","forn":"BUGATTI","nf":"19922","vol":220,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":9498.8,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-05","nPed":"35988","dias":3,"dtRec":"2026-06-08","forn":"AUDIO PARTS","nf":"199666","vol":5,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1072.98,"status":"DIVERGÊNCIA","obs":"ITEM EM DESACORDO COM PEDIDO"},{"mes":"junho","dtPed":"2026-06-08","nPed":"36158","dias":0,"dtRec":"2026-06-08","forn":"AC FILM","nf":"8925","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":190.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-08","nPed":"36159","dias":0,"dtRec":"2026-06-08","forn":"AUDIO PARTS","nf":"199704","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":700.65,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-08","nPed":"36118","dias":1,"dtRec":"2026-06-09","forn":"AUDIO PARTS","nf":"199734","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2223.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-05","nPed":"35985","dias":4,"dtRec":"2026-06-09","forn":"NOVA FILMS","nf":"79905","vol":2,"recPor":"HUGO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1428.45,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-02","nPed":"35920","dias":8,"dtRec":"2026-06-10","forn":"ADINILSON COLLETE","nf":"35920","vol":1,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":217.2,"status":"OK","obs":"SEM NOTA FISCAL"},{"mes":"junho","dtPed":"2026-06-02","nPed":"35922","dias":9,"dtRec":"2026-06-11","forn":"AUTOAMERICA","nf":"286180","vol":34,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":5571.32,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-02","nPed":"35919","dias":9,"dtRec":"2026-06-11","forn":"KITOPLASTIC","nf":"8989","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":3560.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-11","nPed":"36322","dias":0,"dtRec":"2026-06-11","forn":"FIAT VALVERDE","nf":"65176","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":14735.72,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-05-27","nPed":"35837","dias":15,"dtRec":"2026-06-11","forn":"FIAT VALVERDE","nf":"65673","vol":2,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":18726.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-11","nPed":"36326","dias":1,"dtRec":"2026-06-12","forn":"AUDIO PARTS","nf":"199925","vol":4,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1206.95,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-10","nPed":"36265","dias":2,"dtRec":"2026-06-12","forn":"RISO","nf":"7771","vol":10,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":300.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-11","nPed":"36325","dias":1,"dtRec":"2026-06-12","forn":"RISO","nf":"7770","vol":10,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"CONSUMO","valor":865.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-11","nPed":"36337","dias":1,"dtRec":"2026-06-12","forn":"BIGUA DISTRIBUIDORA","nf":"695480","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1294.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-15","nPed":"36359","dias":0,"dtRec":"2026-06-15","forn":"AC FILM","nf":"36359","vol":4,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":10800.0,"status":"OK","obs":"SEM NOTA FISCAL"},{"mes":"junho","dtPed":"2026-06-02","nPed":"35920","dias":13,"dtRec":"2026-06-15","forn":"ADINILSON COLLETE","nf":"35920","vol":2,"recPor":"JAINE","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1086.0,"status":"OK","obs":"SEM NOTA FISCAL"},{"mes":"junho","dtPed":"2026-04-29","nPed":"35320","dias":48,"dtRec":"2026-06-16","forn":"KITOPLASTIC","nf":"9076","vol":4,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":5400.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-15","nPed":"36407","dias":1,"dtRec":"2026-06-16","forn":"AUDIO PARTS","nf":"200080","vol":3,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":354.24,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-16","nPed":"36415","dias":0,"dtRec":"2026-06-16","forn":"AUDIO PARTS","nf":"200079","vol":1,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":260.0,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-17","nPed":"36495","dias":0,"dtRec":"2026-06-17","forn":"AUDIO PARTS","nf":"200144","vol":2,"recPor":"JULIANO","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":615.48,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-16","nPed":"36436","dias":1,"dtRec":"2026-06-17","forn":"GERMANICA AMOREIRAS","nf":"36436","vol":1,"recPor":"CLEBER","tipoRec":"COLETA","tipoEnt":"VENDA","valor":187.39,"status":"OK","obs":"SEM NOTA FISCAL"},{"mes":"junho","dtPed":"2026-06-16","nPed":"36421","dias":2,"dtRec":"2026-06-18","forn":"BIGUA DISTRIBUIDORA","nf":"9340","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1624.35,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-09","nPed":"36234","dias":9,"dtRec":"2026-06-18","forn":"KITOPLASTIC","nf":"696104","vol":15,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":2224.75,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-12","nPed":"36357","dias":6,"dtRec":"2026-06-18","forn":"RENOVE","nf":"10796","vol":10,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":4740.24,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-03","nPed":"35956","dias":15,"dtRec":"2026-06-18","forn":"FILM IN","nf":"22244","vol":1,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":4809.95,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-03","nPed":"36518","dias":15,"dtRec":"2026-06-18","forn":"FILM IN","nf":"22250","vol":6,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":23370.8,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-18","nPed":"36523","dias":1,"dtRec":"2026-06-19","forn":"AUDIO PARTS","nf":"200248","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":1144.6,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-17","nPed":"36490","dias":2,"dtRec":"2026-06-19","forn":"EXCELLENCE","nf":"2599","vol":4,"recPor":"FELIPE","tipoRec":"ESTOQUE","tipoEnt":"ESTETICA","valor":1140.72,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-18","nPed":"36507","dias":1,"dtRec":"2026-06-19","forn":"SEGVEL COMERCIAL","nf":"34087","vol":2,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":17727.12,"status":"OK","obs":""},{"mes":"junho","dtPed":"2026-06-19","nPed":"36542","dias":0,"dtRec":"2026-06-19","forn":"SEGVEL COMERCIAL","nf":"34076","vol":3,"recPor":"INGRID","tipoRec":"ESTOQUE","tipoEnt":"VENDA","valor":22586.28,"status":"OK","obs":""}];
+
+function iniciarRecebimentos(){
+  var RECEB_VERSION='v3'; // incrementar ao mudar recebBase
+  try{
+    var ver=localStorage.getItem('sf_receb_ver');
+    var s=localStorage.getItem('sf_receb');
+    if(s && ver===RECEB_VERSION){
+      recebimentos=JSON.parse(s);
+    } else {
+      // reset com dados novos
+      recebimentos=recebBase.slice();
+      salvarReceb();
+      localStorage.setItem('sf_receb_ver', RECEB_VERSION);
+    }
+  }catch(e){
+    recebimentos=recebBase.slice();
+  }
+}
+
+function salvarReceb(){
+  try{localStorage.setItem('sf_receb',JSON.stringify(recebimentos));}catch(e){}
+}
+
+function editarReceb(idx){
+  var r=recebimentos[idx];
+  if(!r)return;
+  recebEditandoIdx=idx;
+  // Preencher campos primeiro
+  document.getElementById('rMes').value=capitalize(r.mes||'');
+  document.getElementById('rDtPed').value=r.dtPed||'';
+  document.getElementById('rNPed').value=r.nPed||'';
+  document.getElementById('rDtRec').value=r.dtRec||'';
+  document.getElementById('rDias').value=r.dias!==undefined?r.dias:'';
+  document.getElementById('rForn').value=r.forn||'';
+  document.getElementById('rNF').value=r.nf||'';
+  document.getElementById('rVol').value=r.vol||'';
+  document.getElementById('rRecPor').value=r.recPor||'';
+  document.getElementById('rTipo').value=r.tipoRec||r.tipo||'ESTOQUE';
+  document.getElementById('rTipoEnt').value=r.tipoEnt||'';
+  document.getElementById('rValor').value=r.valor||'';
+  document.getElementById('rStatus').value=r.status||'';
+  document.getElementById('rObs').value=r.obs||'';
+  // Navegar para lançar novo
+  document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
+  document.querySelectorAll('.si').forEach(function(x){x.classList.remove('active');});
+  document.getElementById('pg-receb-novo').classList.add('active');
+  var mnNovo=document.getElementById('mn-receb-novo');
+  if(mnNovo) mnNovo.classList.add('active');
+  document.getElementById('breadcrumb').innerHTML='Recebimentos / <span>Editando Recebimento</span>';
+  // Mudar botão e título
+  setTimeout(function(){
+    var btn=document.querySelector('#pg-receb-novo .btn-lancar');
+    if(btn) btn.textContent='Atualizar Recebimento';
+    var h3=document.querySelector('#pg-receb-novo .rec-sec-h h3');
+    if(h3) h3.textContent='Editando Recebimento #'+(idx+1);
+    document.querySelector('.content').scrollTop=0;
+  },50);
+}
+
+function toggleDD(btn){
+  var menu=btn.nextElementSibling;
+  var wasOpen=menu.classList.contains('open');
+  document.querySelectorAll('.dd-menu.open').forEach(function(m){m.classList.remove('open');});
+  if(!wasOpen) menu.classList.add('open');
+}
+function closeDD(){
+  document.querySelectorAll('.dd-menu.open').forEach(function(m){m.classList.remove('open');});
+}
+
+function excluirReceb(idx){
+  openModal('Excluir Registro','Digite sua senha para excluir este recebimento.',function(){
+    recebimentos.splice(idx,1);
+    salvarReceb();
+    renderHist();
+    renderDash();
+    toast('Registro excluido!');
+  });
+}
+
+function capitalize(s){
+  return s?s.charAt(0).toUpperCase()+s.slice(1).toLowerCase():'';
+}
+
+function calcDias(){
+  var dtPed=document.getElementById('rDtPed').value;
+  var dtRec=document.getElementById('rDtRec').value;
+  if(dtPed&&dtRec){
+    var d1=new Date(dtPed),d2=new Date(dtRec);
+    var diff=Math.round((d2-d1)/(1000*60*60*24));
+    document.getElementById('rDias').value=diff;
+  } else {
+    document.getElementById('rDias').value='';
+  }
+}
+
+function lancarReceb(){
+  var forn=document.getElementById('rForn').value.trim();
+  if(!forn){alert('Preencha o fornecedor.');return;}
+  var dtPed=document.getElementById('rDtPed').value;
+  var dtRec=document.getElementById('rDtRec').value;
+  var dias='';
+  if(dtPed&&dtRec){
+    var d1=new Date(dtPed),d2=new Date(dtRec);
+    dias=Math.round((d2-d1)/(1000*60*60*24));
+  }
+  var rec={
+    mes:document.getElementById('rMes').value,
+    dtPed:dtPed,
+    nPed:document.getElementById('rNPed').value,
+    dias:dias,
+    dtRec:dtRec,
+    forn:forn,
+    nf:document.getElementById('rNF').value,
+    vol:parseInt(document.getElementById('rVol').value)||0,
+    recPor:document.getElementById('rRecPor').value,
+    tipo:document.getElementById('rTipo').value,
+    tipoEnt:document.getElementById('rTipoEnt').value,
+    valor:parseFloat(document.getElementById('rValor').value)||0,
+    status:document.getElementById('rStatus').value,
+    obs:document.getElementById('rObs').value
+  };
+  if(recebEditandoIdx>=0){
+    recebimentos[recebEditandoIdx]=rec;
+    var voltarIdx=recebEditandoIdx;
+    recebEditandoIdx=-1;
+    salvarReceb();
+    // Voltar para histórico
+    document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
+    document.querySelectorAll('.si').forEach(function(x){x.classList.remove('active');});
+    document.getElementById('pg-receb-hist').classList.add('active');
+    var mnHist=document.getElementById('mn-receb-hist');
+    if(mnHist) mnHist.classList.add('active');
+    document.getElementById('breadcrumb').innerHTML='Recebimentos / <span>Entradas</span>';
+    renderHist();
+    renderDash();
+    // Restaurar botão
+    setTimeout(function(){
+      var btn=document.querySelector('#pg-receb-novo .btn-lancar');
+      if(btn) btn.textContent='Lancar Recebimento';
+      var h3=document.querySelector('#pg-receb-novo .rec-sec-h h3');
+      if(h3) h3.textContent='+ Lancar Novo Recebimento';
+      // Destacar a linha editada
+      var rows=document.querySelectorAll('#histBody tr');
+      rows.forEach(function(row,i){
+        if(i===voltarIdx){
+          row.style.background='#fef9c3';
+          row.scrollIntoView({behavior:'smooth',block:'center'});
+          setTimeout(function(){row.style.background='';},2000);
+        }
+      });
+    },100);
+    toast('Recebimento atualizado!');
+  } else {
+    recebimentos.unshift(rec);
+    salvarReceb();
+    renderHist();
+    renderDash();
+  }
+  // limpar form
+  ['rNPed','rDtPed','rDtRec','rDias','rForn','rNF','rVol','rRecPor','rStatus','rObs','rValor'].forEach(function(id){
+    var e=document.getElementById(id);if(e)e.value='';
+  });
+  document.getElementById('rMes').value='';
+  document.getElementById('rTipo').value='ESTOQUE';
+  document.getElementById('rTipoEnt').value='';
+  toast('Recebimento lancado com sucesso!');
+}
+
+function toggleRecebMenu(){
+  var sub=document.getElementById('recebSubmenu');
+  var arrow=document.getElementById('arrowRecebMenu');
+  if(!sub)return;
+  var open=sub.style.display!=='none';
+  sub.style.display=open?'none':'block';
+  if(arrow) arrow.innerHTML=open?'&#9660;':'&#9650;';
+}
+
+function toggleRecSec(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+function fmtData(d){
+  if(!d)return '-';
+  if(d.indexOf('-')>=0){
+    var p=d.split('-');
+    return p[2]+'/'+p[1]+'/'+p[0];
+  }
+  // serial Excel
+  var s=parseInt(d);
+  if(s>40000){
+    var dt=new Date((s-25569)*86400*1000);
+    return String(dt.getDate()).padStart(2,'0')+'/'+String(dt.getMonth()+1).padStart(2,'0')+'/'+dt.getFullYear();
+  }
+  return d;
+}
+
+function fmtMes(m){
+  var map={marco:'Marco',abril:'Abril',maio:'Maio',junho:'Junho',julho:'Julho',agosto:'Agosto',setembro:'Setembro',outubro:'Outubro',novembro:'Novembro',dezembro:'Dezembro',janeiro:'Janeiro',fevereiro:'Fevereiro'};
+  return map[m]||m||'-';
+}
+
+function renderHist(){
+  var filtMes=(document.getElementById('rFiltMes')||{}).value||'';
+  var busca=((document.getElementById('rBusca')||{}).value||'').toLowerCase();
+  var filtTipoEntH=(document.getElementById('rFiltTipoEnt')||{}).value||'';
+  var lista=recebimentos.filter(function(r){
+    if(filtMes&&r.mes.toLowerCase()!==filtMes.toLowerCase()) return false;
+    if(busca&&(r.forn||'').toLowerCase().indexOf(busca)<0&&(r.nPed||'').indexOf(busca)<0&&(r.nf||'').indexOf(busca)<0) return false;
+    if(filtTipoEntH&&(r.tipoEnt||'').toUpperCase()!==filtTipoEntH.toUpperCase()) return false;
+    return true;
+  });
+  var tb=document.getElementById('histBody');
+  if(!tb)return;
+  if(lista.length===0){tb.innerHTML='<tr><td colspan="13" style="padding:30px;text-align:center;color:#9ca3af">Nenhum registro encontrado</td></tr>';return;}
+  // mapear indices originais para editar/excluir
+  var listaIdx=[];
+  lista.forEach(function(r){
+    var idx=recebimentos.indexOf(r);
+    listaIdx.push({r:r,idx:idx});
+  });
+
+  tb.innerHTML=listaIdx.map(function(item){
+    var r=item.r; var idx=item.idx;
+    var diasCls=r.dias===0?'dias-zero':r.dias<0?'dias-neg':'dias-pos';
+    var stCls=r.status==='OK'?'st-ok':(r.status&&r.status.toUpperCase().indexOf('DIV')>=0?'st-div':'st-pend');
+    var stLabel=r.status||'PENDENTE';
+    var valorNum=parseFloat(String(r.valor).replace(',','.'));
+    var valorStr=(!isNaN(valorNum)&&valorNum>0)?'R$ '+valorNum.toFixed(2).replace('.',','):'-';
+    return '<tr>'+
+      '<td style="font-weight:600;text-align:center">'+fmtMes(r.mes)+'</td>'+
+      '<td style="text-align:center">'+fmtData(r.dtPed)+'</td>'+
+      '<td style="text-align:center">'+( r.nPed||'-')+'</td>'+
+      '<td class="'+diasCls+'" style="text-align:center;font-weight:600">'+(r.dias!==''&&r.dias!==undefined?r.dias:'-')+'</td>'+
+      '<td style="text-align:center">'+fmtData(r.dtRec)+'</td>'+
+      '<td style="font-weight:600">'+( r.forn||'-')+'</td>'+
+      '<td style="text-align:center">'+( r.nf||'-')+'</td>'+
+      '<td style="text-align:center">'+( r.vol||0)+'</td>'+
+      '<td style="text-align:center">'+( r.recPor||'-')+'</td>'+
+      '<td style="text-align:center">'+( r.tipoRec||r.tipo||'-')+'</td>'+
+      '<td style="text-align:center">'+( r.tipoEnt||'-')+'</td>'+
+      '<td style="color:#16a34a;font-weight:500;text-align:right">'+valorStr+'</td>'+
+      '<td style="text-align:center"><span class="'+stCls+'">'+stLabel+'</span></td>'+
+      '<td style="text-align:center">'+
+        '<div class="dd-wrap">'+
+          '<button class="dd-btn" onclick="toggleDD(this)">Ações</button>'+
+          '<div class="dd-menu">'+
+            '<a onclick="editarReceb('+idx+');closeDD()">✏️ Editar</a>'+
+            '<a class="red" onclick="excluirReceb('+idx+');closeDD()">🗑️ Excluir</a>'+
+          '</div>'+
+        '</div>'+
+      '</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function atualizarDiasFiltro(){
+  var mes=(document.getElementById('dFiltMes')||{}).value||'';
+  var sel=document.getElementById('dFiltDia');
+  if(!sel)return;
+  var valorAtual=sel.value; // preservar valor selecionado
+  var lista=mes?recebimentos.filter(function(r){return r.mes.toLowerCase()===mes.toLowerCase();}):recebimentos;
+  var dias={};
+  lista.forEach(function(r){if(r.dtRec)dias[r.dtRec]=1;});
+  var sorted=Object.keys(dias).sort();
+  sel.innerHTML='<option value="">Todos os dias</option>'+sorted.map(function(d){
+    var parts=d.split('-');
+    var label=parts[2]+'/'+parts[1]+'/'+parts[0];
+    return '<option value="'+d+'">'+label+'</option>';
+  }).join('');
+  // restaurar valor selecionado se ainda existir
+  if(valorAtual) sel.value=valorAtual;
+}
+
+function renderDash(){
+  atualizarDiasFiltro();
+  var filtMes=(document.getElementById('dFiltMes')||{}).value||'';
+  var filtDia=(document.getElementById('dFiltDia')||{}).value||'';
+  var filtTipoEnt=(document.getElementById('dFiltTipoEnt')||{}).value||'';
+  var lista=recebimentos.filter(function(r){
+    if(filtMes&&r.mes.toLowerCase()!==filtMes.toLowerCase()) return false;
+    if(filtDia&&r.dtRec!==filtDia) return false;
+    if(filtTipoEnt&&(r.tipoEnt||'').toUpperCase()!==filtTipoEnt.toUpperCase()) return false;
+    return true;
+  });
+
+  // cards
+  var divs=lista.filter(function(r){return r.status&&r.status.toUpperCase().indexOf('DIV')>=0;}).length;
+  var totalVol=lista.reduce(function(a,r){return a+(parseInt(r.vol)||0);},0);
+  var totalVal=lista.reduce(function(a,r){return a+(parseFloat(r.valor)||0);},0);
+  var cVenda=lista.filter(function(r){return (r.tipoEnt||'').toUpperCase()==='VENDA';}).length;
+  var cEst=lista.filter(function(r){return (r.tipoEnt||'').toUpperCase()==='ESTETICA';}).length;
+  var cCons=lista.filter(function(r){return (r.tipoEnt||'').toUpperCase()==='CONSUMO';}).length;
+  var cSemNF=lista.filter(function(r){return !r.nf||r.nf===''||r.nf==='None';}).length;
+  var el=function(id){return document.getElementById(id);};
+  if(el('dDiv')) el('dDiv').textContent=divs;
+  if(el('dNF')) el('dNF').textContent=lista.length;
+  if(el('dVol')) el('dVol').textContent=totalVol;
+  if(el('dVal')) el('dVal').textContent='R$ '+totalVal.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(el('dVenda')) el('dVenda').textContent=cVenda;
+  if(el('dEst')) el('dEst').textContent=cEst;
+  if(el('dCons')) el('dCons').textContent=cCons;
+  if(el('dSemNF')) el('dSemNF').textContent=cSemNF;
+
+  // titulo dos graficos
+  var nomeMes=filtMes?filtMes.charAt(0).toUpperCase()+filtMes.slice(1):'';
+  var nomeDia=filtDia?fmtData(filtDia):'';
+  var tituloSufixo=nomeDia?' - Dia '+nomeDia:(nomeMes?' - '+nomeMes:'');
+  if(el('dTitNF')) el('dTitNF').textContent='Notas Fiscais Recebidas'+tituloSufixo;
+  if(el('dTitVol')) el('dTitVol').textContent='Volumes Recebidos'+tituloSufixo;
+
+  // agrupar por dia
+  var byDay={};
+  lista.forEach(function(r){
+    var key=r.dtRec||'';
+    if(!byDay[key]) byDay[key]={nf:0,vol:0};
+    byDay[key].nf++;
+    byDay[key].vol+=(parseInt(r.vol)||0);
+  });
+  var dias=Object.keys(byDay).sort();
+  if(dias.length>20) dias=dias.slice(-20);
+
+  // label do mes abaixo dos graficos
+  var mesLabel=nomeMes||'Todos os meses';
+  if(el('dMesLabelNF')) el('dMesLabelNF').textContent=mesLabel;
+  if(el('dMesLabelVol')) el('dMesLabelVol').textContent=mesLabel;
+
+  function renderBarrasAnimado(containerId,getVal,alturaMax){
+    var cont=el(containerId);
+    if(!cont)return;
+    var vals=dias.map(function(d){return getVal(byDay[d]);});
+    var mx=Math.max.apply(null,vals.concat([1]));
+    var alt=alturaMax||100;
+    // Wrapper externo: label topo fixo + barra + label dia
+    cont.style.justifyContent='space-between';
+    cont.style.flexWrap='nowrap';
+    cont.style.width='100%';
+    cont.style.alignItems='flex-end';
+    cont.style.overflow='visible';
+    cont.innerHTML=dias.map(function(d){
+      var v=getVal(byDay[d]);
+      var label=d?d.split('-')[2]||d:'';
+      var h=Math.max(Math.round((v/mx)*alt), v>0?3:0);
+      return '<div style="display:flex;flex-direction:column;align-items:center;flex:1;padding:0 2px;justify-content:flex-end">'+
+        '<div style="font-size:10px;color:#93c5fd;height:16px;line-height:16px;text-align:center;white-space:nowrap;overflow:visible">'+v+'</div>'+
+        '<div style="width:100%;min-width:8px;background:#3b82f6;border-radius:3px 3px 0 0;height:0px;transition:height 0.6s ease" data-h="'+h+'px"></div>'+
+        '<div style="font-size:9px;color:rgba(255,255,255,.5);margin-top:3px;white-space:nowrap;text-align:center">'+label+'</div>'+
+      '</div>';
+    }).join('');
+    setTimeout(function(){
+      cont.querySelectorAll('[data-h]').forEach(function(b){
+        b.style.height=b.getAttribute('data-h');
+      });
+    },60);
+  }
+
+  renderBarrasAnimado('dBarNF',function(x){return x.nf;},130);
+  renderBarrasAnimado('dBarVol',function(x){return x.vol;},110);
+
+  // recebido por
+  var porPessoa={};
+  lista.forEach(function(r){
+    var p=(r.recPor||'').trim();
+    if(!p)return;
+    porPessoa[p]=(porPessoa[p]||0)+1;
+  });
+  var sorted=Object.keys(porPessoa).sort(function(a,b){return porPessoa[b]-porPessoa[a];});
+  var mx2=sorted.length?porPessoa[sorted[0]]:1;
+  var dPor=el('dPor');
+  if(dPor){
+    dPor.innerHTML=sorted.map(function(p){
+      var v=porPessoa[p];
+      var w=Math.round((v/mx2)*160);
+      return '<div class="receb-by-row">'+
+        '<div class="receb-by-name">'+p+'</div>'+
+        '<div class="receb-by-bar" style="width:0px;transition:width 0.5s ease" data-w="'+w+'"></div>'+
+        '<div class="receb-by-val">'+v+'</div>'+
+      '</div>';
+    }).join('');
+    setTimeout(function(){
+      dPor.querySelectorAll('.receb-by-bar').forEach(function(b){
+        b.style.width=b.getAttribute('data-w')+'px';
+      });
+    },80);
+  }
+}
+
+
+
+// ===== IMPORTAR EXCEL =====
+function importarExcel(event){
+  var file=event.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      // Usar SheetJS via CDN
+      var script=document.createElement('script');
+      script.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+      script.onload=function(){
+        var data=new Uint8Array(e.target.result);
+        var wb=XLSX.read(data,{type:'array',cellDates:true});
+        var ws=wb.Sheets[wb.SheetNames[0]];
+        var rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,dateNF:'yyyy-mm-dd'});
+        var mMap={1:'janeiro',2:'fevereiro',3:'marco',4:'abril',5:'maio',6:'junho',7:'julho',8:'agosto',9:'setembro',10:'outubro',11:'novembro',12:'dezembro'};
+        var novos=0;
+        for(var i=1;i<rows.length;i++){
+          var r=rows[i];
+          if(!r[5])continue;
+          var dtPed='',dtRec='';
+          // tratar datas
+          if(r[1]){var d=new Date(r[1]);if(!isNaN(d)){dtPed=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}}
+          if(r[4]){var d=new Date(r[4]);if(!isNaN(d)){dtRec=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}}
+          var dias='';
+          if(dtPed&&dtRec){var d1=new Date(dtPed),d2=new Date(dtRec);dias=Math.round((d2-d1)/(1000*60*60*24));}
+          var mes='';
+          if(dtRec){var m=parseInt(dtRec.split('-')[1]);mes=mMap[m]||'';}
+          var rec={
+            mes:mes,dtPed:dtPed,nPed:String(r[2]||''),dias:dias,dtRec:dtRec,
+            forn:String(r[5]||'').trim(),nf:String(r[6]||''),
+            vol:parseInt(r[7])||0,recPor:String(r[8]||'').trim(),
+            tipoRec:String(r[9]||'').trim(),tipoEnt:String(r[10]||'').trim(),
+            valor:parseFloat(r[11])||0,status:String(r[12]||'').trim(),
+            obs:String(r[13]||'').trim()
+          };
+          // verificar duplicata por nPed+nf
+          var dup=false;
+          for(var j=0;j<recebimentos.length;j++){if(recebimentos[j].nPed===rec.nPed&&recebimentos[j].nf===rec.nf){dup=true;break;}}
+          if(!dup){recebimentos.unshift(rec);novos++;}
+        }
+        salvarReceb();renderHist();renderDash();
+        toast(novos+' registros importados! (duplicatas ignoradas)');
+      };
+      document.head.appendChild(script);
+    }catch(err){toast('Erro ao importar: '+err.message);}
+  };
+  reader.readAsArrayBuffer(file);
+  event.target.value='';
+}
+
+// ===== ATUALIZAÇÕES =====
+var VERSAO_ATUAL = '2026.06.27.1';
+var GITHUB_URL = 'https://raw.githubusercontent.com/fsdsilva/nexustech/main/version.json';
+var GITHUB_DOWNLOAD = 'https://github.com/fsdsilva/nexustech/raw/main/index.html';
+
+function abrirUpd(){
+  document.getElementById('updModal').classList.add('open');
+  document.getElementById('updVerAtual').textContent = VERSAO_ATUAL;
+  document.getElementById('updVerNova').textContent = '...';
+  document.getElementById('updTitle').textContent = 'Verificando atualizações...';
+  document.getElementById('updDesc').textContent = 'Consultando o servidor para verificar se há uma versão mais recente.';
+  document.getElementById('updStatus').innerHTML = '<div style="text-align:center;padding:12px;color:#9ca3af;font-size:13px">&#8987; Verificando...</div>';
+  document.getElementById('updNotes').style.display = 'none';
+  document.getElementById('updBtnIr').style.display = 'none';
+  document.getElementById('updFooter').textContent = '';
+  var dot = document.getElementById('updDot');
+  dot.className = 'upd-dot checking';
+
+  // Buscar version.json do GitHub
+  fetch(GITHUB_URL + '?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var verNova = data.versao || VERSAO_ATUAL;
+      document.getElementById('updVerNova').textContent = verNova;
+      document.getElementById('updFooter').textContent = 'Última verificação: ' + new Date().toLocaleString('pt-BR');
+
+      if(verNova > VERSAO_ATUAL){
+        // Tem atualização!
+        dot.className = 'upd-dot available';
+        document.getElementById('updBtnText').textContent = 'Nova versão disponível!';
+        document.getElementById('updTitle').textContent = '🆕 Nova versão disponível!';
+        document.getElementById('updDesc').textContent = 'Uma versão mais recente do NexusTech está disponível. Baixe e substitua o arquivo no GitHub.';
+        document.getElementById('updStatus').innerHTML = '<div class="upd-status-new">&#128640; Versão '+verNova+' disponível para download!</div>';
+        if(data.notas && data.notas.length){
+          document.getElementById('updNotes').style.display = 'block';
+          document.getElementById('updNotesList').innerHTML = data.notas.map(function(n){return '• '+n;}).join('<br>');
+        }
+        document.getElementById('updBtnIr').style.display = 'inline-block';
+      } else {
+        // Já está atualizado
+        dot.className = 'upd-dot';
+        document.getElementById('updBtnText').textContent = 'Verificar atualizações';
+        document.getElementById('updTitle').textContent = '✅ Sistema atualizado!';
+        document.getElementById('updDesc').textContent = 'Você está usando a versão mais recente do NexusTech.';
+        document.getElementById('updStatus').innerHTML = '<div class="upd-status-ok">&#10003; Versão '+VERSAO_ATUAL+' — Você está atualizado!</div>';
+      }
+    })
+    .catch(function(){
+      dot.className = 'upd-dot';
+      document.getElementById('updTitle').textContent = 'Sem conexão';
+      document.getElementById('updDesc').textContent = 'Não foi possível verificar atualizações. Verifique sua conexão com a internet.';
+      document.getElementById('updStatus').innerHTML = '<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px 16px;font-size:13px;color:#dc2626">&#10005; Não foi possível conectar ao servidor.</div>';
+      document.getElementById('updVerNova').textContent = '?';
+    });
+}
+
+function fecharUpd(){
+  document.getElementById('updModal').classList.remove('open');
+}
+
+function irParaGithub(){
+  window.open(GITHUB_DOWNLOAD, '_blank');
+  fecharUpd();
+}
+
+// Verificar automaticamente ao logar
+function verificarUpdAuto(){
+  fetch(GITHUB_URL + '?t=' + Date.now())
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      var verNova = data.versao || VERSAO_ATUAL;
+      if(verNova > VERSAO_ATUAL){
+        document.getElementById('updDot').className = 'upd-dot available';
+        document.getElementById('updBtnText').textContent = '🆕 Nova versão disponível!';
+      }
+    })
+    .catch(function(){});
+}
+
+// ===== INIT =====
+carregar();
+iniciarRecebimentos();
+document.addEventListener('click',function(e){
+  if(!e.target.closest('.dd-wrap')){
+    document.querySelectorAll('.dd-menu.open').forEach(function(m){m.classList.remove('open');});
+  }
+});
+// Auto-login se tiver sessão salva
+(function(){
+  var sess=localStorage.getItem('sf_session');
+  if(sess){
+    try{
+      var s=JSON.parse(sess);
+      var u=null;
+      for(var i=0;i<usuarios.length;i++){if(usuarios[i].login===s.login&&usuarios[i].senha===s.senha){u=usuarios[i];break;}}
+      if(u){usuAtual=u;iniciarApp(u);return;}
+    }catch(e){}
+  }
+  // sem sessão - mostrar login
+  document.getElementById('pgLogin').style.display='flex';
+})();
+</script>
+</body>
+</html>
