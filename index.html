@@ -283,6 +283,11 @@ tbody tr:hover{background:#f9fafb;}
     <div style="margin-top:24px;font-size:11px;color:#d1d5db;text-align:center">
       NexusTech Sistema de Gestão © 2026
     </div>
+    <div style="margin-top:12px;text-align:center">
+      <button onclick="resetEmergencia()" style="background:none;border:none;color:#d1d5db;font-size:11px;cursor:pointer;text-decoration:underline">
+        Problema ao carregar? Clique aqui
+      </button>
+    </div>
   </div>
   <!-- PAINEL DIREITO COM LOGO -->
   <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 60%,#1d4ed8 100%);min-height:100vh;padding:40px">
@@ -331,57 +336,134 @@ tbody tr:hover{background:#f9fafb;}
 <!-- APP -->
 <div class="app" id="pgApp">
   <nav class="sidebar">
-    <div class="sl"><span>NexusTech</span><small>Sistema de Gestão</small></div>
+    <div class="sl">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:28px;height:28px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0">N</div>
+        <div><span style="color:#fff;font-size:14px;font-weight:700">NexusTech</span><small style="display:block;color:rgba(255,255,255,.35);font-size:10px">Sistema de Gestão</small></div>
+      </div>
+    </div>
     <div class="su">
       <div class="su-av" id="uAv">?</div>
       <div class="su-info"><strong id="uNome">-</strong><small id="uRole">-</small></div>
       <button class="btn-out" onclick="doLogout()" title="Sair">&#9211;</button>
     </div>
-    <div style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.08)">
+    <div style="padding:6px 10px;border-bottom:0.5px solid rgba(255,255,255,.08)">
       <button class="upd-btn" onclick="abrirUpd()" style="width:100%">
         <div class="upd-dot" id="updDot"></div>
         <span id="updBtnText">Verificar atualizações</span>
       </button>
     </div>
-    <div class="ss">
-      <div class="ss-t">Cadastros</div>
-      <div class="si" id="mn-cadastros" onclick="nav('cadastros')">
-        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Cadastros
+
+    <!-- MINHA ÁREA -->
+    <div class="ss"><div class="ss-t">Minha Área</div>
+      <div class="si active" id="mn-dashboard" onclick="nav('dashboard')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard
       </div>
-      <div class="si" id="mn-produto" onclick="nav('produto')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Cadastro de Produtos
+      <div class="si" id="mn-agenda" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Agenda
       </div>
-      <div class="si active" id="mn-lista" onclick="nav('lista')">
-        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Produtos
+      <div class="si" id="mn-ponto" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Meu Ponto
       </div>
-      <div class="si" onclick="nav('wip')"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Clientes</div>
-      <div class="si" onclick="nav('wip')"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Fornecedores</div>
+      <div class="si" id="mn-msg" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Mensagens
+      </div>
     </div>
-    <div class="ss">
-      <div class="ss-t">Estoque</div>
-      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>Romaneio Geral</div>
-      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>Romaneios Pre Set.</div>
-      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><line x1="6" y1="3" x2="6" y2="15"/><circle cx="18" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg>Romaneio Separacao</div>
-      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>Conferencia</div>
-      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Gerar Rom. Entrega</div>
-      <div class="si sub" id="mn-entrega" onclick="nav('entrega')"><svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Romaneio Entrega</div>
-      <div class="si sub" id="mn-receb" onclick="toggleRecebMenu()">
-        <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-        Recebimentos <span id="arrowRecebMenu" style="margin-left:auto;font-size:12px">&#9660;</span>
+
+    <!-- ÁREA DE CADASTRO -->
+    <div class="ss"><div class="ss-t">Área de Cadastro</div>
+      <div class="si" id="mn-clientes" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Clientes
       </div>
-      <div id="recebSubmenu" style="display:none">
-        <div class="si sub" id="mn-receb-novo" onclick="nav('receb-novo')" style="padding-left:48px;font-size:11px">
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Lancar Novo
+      <div class="si" id="mn-fornecedores" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Fornecedores
+      </div>
+      <div class="si" id="mn-transportadora" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Transportadora
+      </div>
+      <div class="si" id="mn-lojas" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Lojas
+      </div>
+      <div class="si" id="mn-servicos" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>Serviços
+      </div>
+      <div class="si" id="mn-solicitacao" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>Solicitação de Compra
+      </div>
+
+      <!-- PRODUTOS (expansível) -->
+      <div class="si" id="mn-prod-grupo" onclick="toggleGrupo('prodGrupo')">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+        Produtos <span id="arrProd" style="margin-left:auto;font-size:11px">&#9660;</span>
+      </div>
+      <div id="prodGrupo" style="display:none">
+        <div class="si sub" id="mn-produto" onclick="nav('produto')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Cadastro de Produtos
         </div>
-        <div class="si sub" id="mn-receb-hist" onclick="nav('receb-hist')" style="padding-left:48px;font-size:11px">
-          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Entradas
+      </div>
+
+      <!-- TABELAS DE APOIO (expansível) -->
+      <div class="si" id="mn-cads-grupo" onclick="toggleGrupo('cadsGrupo')">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Tabelas de Apoio <span id="arrCads" style="margin-left:auto;font-size:11px">&#9660;</span>
+      </div>
+      <div id="cadsGrupo" style="display:none">
+        <div class="si sub" id="mn-famProd" onclick="nav('fam-prod')">
+          <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Família Produto
         </div>
-        <div class="si sub" id="mn-receb-dash" onclick="nav('receb-dash')" style="padding-left:48px;font-size:11px">
+        <div class="si sub" id="mn-famServ" onclick="nav('wip')">
+          <svg viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>Família Serviço
+        </div>
+        <div class="si sub" id="mn-marcaVeic" onclick="nav('marca-veic')">
+          <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Marcas de Veículos
+        </div>
+        <div class="si sub" id="mn-marcaProd" onclick="nav('marca-prod')">
+          <svg viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>Marcas de Produtos
+        </div>
+        <div class="si sub" id="mn-colab" onclick="nav('colaboradores')">
+          <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Colaboradores
+        </div>
+      </div>
+
+
+
+      <div class="si" id="mn-frota" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Frota
+      </div>
+      <div class="si" id="mn-financeiro" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Financeiro
+      </div>
+    </div>
+
+    <!-- ESTOQUE -->
+    <div class="ss"><div class="ss-t">Estoque</div>
+      <div class="si" id="mn-receb-grupo" onclick="toggleGrupo('recebGrupo')">
+        <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Recebimentos <span id="arrReceb" style="margin-left:auto;font-size:11px">&#9660;</span>
+      </div>
+      <div id="recebGrupo" style="display:block">
+        <div class="si sub" id="mn-receb-novo" onclick="nav('receb-novo')">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>Lançar Novo
+        </div>
+        <div class="si sub" id="mn-receb-hist" onclick="nav('receb-hist')">
+          <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/></svg>Entradas
+        </div>
+        <div class="si sub" id="mn-receb-dash" onclick="nav('receb-dash')">
           <svg viewBox="0 0 24 24"><rect x="2" y="3" width="4" height="18"/><rect x="10" y="8" width="4" height="13"/><rect x="18" y="13" width="4" height="8"/></svg>Dashboard
         </div>
       </div>
-      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>Logistica Reversa</div>
-      <div class="si sub" onclick="nav('wip')"><svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Estoque</div>
+      <div class="si sub" id="mn-lista" onclick="nav('lista')">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Consultar Produtos
+      </div>
+      <div class="si sub" id="mn-entrega" onclick="nav('entrega')">
+        <svg viewBox="0 0 24 24"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>Romaneio Entrega
+      </div>
+      <div class="si sub" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.31"/></svg>Logística Reversa
+      </div>
+      <div class="si sub" onclick="nav('wip')">
+        <svg viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>Estoque Geral
+      </div>
     </div>
   </nav>
 
@@ -610,10 +692,11 @@ tbody tr:hover{background:#f9fafb;}
             </div>
             <div class="rec-form-grid">
               <div class="rec-fg"><label>Recebido Por</label><input type="text" id="rRecPor" placeholder="Nome do responsavel"/></div>
-              <div class="rec-fg"><label>Tipo de Recebimento</label><select id="rTipo"><option>ESTOQUE</option><option>COLETA</option><option>TRANSFERENCIA</option></select></div>
+              <div class="rec-fg"><label>Recebido com Nota Fiscal?</label><select id="rComNF"><option value="Sim">Sim</option><option value="Não">Não</option></select></div>
+              <div class="rec-fg"><label>Tipo de Recebimento</label><select id="rTipo"><option>ESTOQUE</option><option>COLETA</option></select></div>
               <div class="rec-fg"><label>Tipo de Entrada</label><select id="rTipoEnt"><option value="">Selecione</option><option>VENDA</option><option>ESTETICA</option><option>CONSUMO</option></select></div>
               <div class="rec-fg"><label>Valor Total NF (R$)</label><input type="number" id="rValor" placeholder="Ex: 1500.00" step="0.01"/></div>
-              <div class="rec-fg"><label>Status</label><input type="text" id="rStatus" placeholder="Ex: OK / DIVERGENCIA / PENDENTE"/></div>
+              <div class="rec-fg"><label>Status</label><select id="rStatus"><option value="">Status</option><option>OK</option><option>DIVERGÊNCIA</option></select></div>
             </div>
             <div class="rec-fg" style="margin-bottom:16px"><label>Observacao</label><textarea id="rObs" placeholder="Observacoes adicionais..."></textarea></div>
             <button class="btn-lancar" onclick="lancarReceb()">Lancar Recebimento</button>
@@ -650,7 +733,7 @@ tbody tr:hover{background:#f9fafb;}
             </div>
             <div style="overflow-x:auto">
               <table>
-                <thead><tr><th style="text-align:center">MÊS</th><th style="text-align:center">DATA PEDIDO</th><th style="text-align:center">N° PEDIDO</th><th style="text-align:center">PRAZO ENTREGA</th><th style="text-align:center">DATA RECEB.</th><th style="text-align:center">FORNECEDOR</th><th style="text-align:center">NF</th><th style="text-align:center">VOLUMES</th><th style="text-align:center">RECEBIDO POR</th><th style="text-align:center">TIPO REC.</th><th style="text-align:center">TIPO ENT.</th><th style="text-align:center">VALOR NF</th><th style="text-align:center">STATUS</th><th style="text-align:center">AÇÕES</th></tr></thead>
+                <thead><tr><th style="text-align:center">MÊS</th><th style="text-align:center">DATA PEDIDO</th><th style="text-align:center">N° PEDIDO</th><th style="text-align:center">PRAZO ENTREGA</th><th style="text-align:center">DATA RECEB.</th><th style="text-align:center">FORNECEDOR</th><th style="text-align:center">NF</th><th style="text-align:center">COM NF</th><th style="text-align:center">VOLUMES</th><th style="text-align:center">RECEBIDO POR</th><th style="text-align:center">TIPO REC.</th><th style="text-align:center">TIPO ENT.</th><th style="text-align:center">VALOR NF</th><th style="text-align:center">STATUS</th><th style="text-align:center">AÇÕES</th></tr></thead>
                 <tbody id="histBody"></tbody>
               </table>
             </div>
@@ -716,6 +799,163 @@ tbody tr:hover{background:#f9fafb;}
               <div id="dPor" style="margin-top:4px;max-height:130px;overflow-y:auto"></div>
             </div>
 
+          </div>
+        </div>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="page" id="pg-dashboard">
+        <div style="max-width:1100px;margin:0 auto">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">
+            <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px">
+              <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Recebimentos (mês)</div>
+              <div style="font-size:26px;font-weight:500;color:var(--text-primary)" id="dashNF">-</div>
+            </div>
+            <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px">
+              <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Volumes (mês)</div>
+              <div style="font-size:26px;font-weight:500;color:var(--text-accent)" id="dashVol">-</div>
+            </div>
+            <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px">
+              <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Produtos cadastrados</div>
+              <div style="font-size:26px;font-weight:500;color:var(--text-success)" id="dashProd">-</div>
+            </div>
+            <div style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px">
+              <div style="font-size:10px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Divergências</div>
+              <div style="font-size:26px;font-weight:500;color:var(--text-warning)" id="dashDiv">-</div>
+            </div>
+          </div>
+          <div style="font-size:11px;font-weight:500;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Acesso rápido</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px">
+            <div onclick="nav('receb-novo')" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg-success);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#8595;</div>
+              <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Lançar Recebimento</div><div style="font-size:11px;color:var(--text-muted)">Nova entrada de estoque</div></div>
+            </div>
+            <div onclick="nav('produto')" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg-warning);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#43;</div>
+              <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Cadastrar Produto</div><div style="font-size:11px;color:var(--text-muted)">Adicionar item ao catálogo</div></div>
+            </div>
+            <div onclick="nav('lista')" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg-accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#128269;</div>
+              <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Consultar Produtos</div><div style="font-size:11px;color:var(--text-muted)">Buscar no estoque</div></div>
+            </div>
+            <div onclick="nav('receb-hist')" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg-pro);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#128203;</div>
+              <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Entradas</div><div style="font-size:11px;color:var(--text-muted)">Histórico de recebimentos</div></div>
+            </div>
+            <div onclick="nav('receb-dash')" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg-danger);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#128202;</div>
+              <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Dashboard</div><div style="font-size:11px;color:var(--text-muted)">Análise de recebimentos</div></div>
+            </div>
+            <div onclick="nav('cadastros')" style="background:var(--surface-2);border:0.5px solid var(--border);border-radius:10px;padding:16px;display:flex;align-items:center;gap:12px;cursor:pointer" onmouseover="this.style.borderColor='var(--border-accent)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="width:36px;height:36px;border-radius:8px;background:var(--bg-success);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px">&#9881;</div>
+              <div><div style="font-size:13px;font-weight:500;color:var(--text-primary)">Tabelas de Apoio</div><div style="font-size:11px;color:var(--text-muted)">Famílias, marcas, usuários</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FAM PRODUTO -->
+      <div class="page" id="pg-fam-prod">
+        <div style="max-width:700px;margin:0 auto">
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+            <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+              <h3 style="font-size:13px;font-weight:600;color:#111">&#128193; Família Produto</h3>
+              <small id="cntFamProd" style="font-size:11px;color:#6b7280">0 cadastradas</small>
+            </div>
+            <div style="padding:14px 16px">
+              <div style="display:flex;gap:6px;margin-bottom:8px">
+                <input type="text" id="inFamProd" placeholder="Ex: Acessórios, Estoque Loja, Lavagem..." onkeydown="if(event.key==='Enter')addFamProd()" style="flex:1;height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none"/>
+                <button onclick="addFamProd()" style="height:34px;padding:0 14px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:18px;cursor:pointer">+</button>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px">
+                <select id="subFamPaiProd" style="flex:1;height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none"><option value="">Adicionar subfamília → selecione a família pai...</option></select>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px">
+                <input type="text" id="inSubFamProd" placeholder="Nome da subfamília..." onkeydown="if(event.key==='Enter')addSubFamProd()" style="flex:1;height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none"/>
+                <button onclick="addSubFamProd()" style="height:34px;padding:0 14px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:18px;cursor:pointer">+</button>
+              </div>
+              <div style="max-height:300px;overflow-y:auto" id="lstFamProd"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARCA VEICULO -->
+      <div class="page" id="pg-marca-veic">
+        <div style="max-width:700px;margin:0 auto">
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+            <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+              <h3 style="font-size:13px;font-weight:600;color:#111">&#128663; Marcas de Veículos</h3>
+              <small id="cntMarcaVeic" style="font-size:11px;color:#6b7280">0 cadastradas</small>
+            </div>
+            <div style="padding:14px 16px">
+              <div style="display:flex;gap:6px;margin-bottom:8px">
+                <input type="text" id="inMarcaVeic" placeholder="Ex: VOLKSWAGEN, FIAT, CHEVROLET..." onkeydown="if(event.key==='Enter')addMarcaVeicPg()" style="flex:1;height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none"/>
+                <button onclick="addMarcaVeicPg()" style="height:34px;padding:0 14px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:18px;cursor:pointer">+</button>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:8px">
+                <select id="marcaVeicParent" onchange="renderModelosInput()" style="height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;flex:1"><option value="">Adicionar modelo → selecione a marca...</option></select>
+              </div>
+              <div style="display:flex;gap:6px;margin-bottom:12px">
+                <input type="text" id="inModeloVeic" placeholder="Modelo (ex: TORO, POLO, ONIX...)" onkeydown="if(event.key==='Enter')addModeloVeicPg()" style="flex:1;height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none"/>
+                <button onclick="addModeloVeicPg()" style="height:34px;padding:0 14px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:18px;cursor:pointer">+</button>
+              </div>
+              <div style="max-height:300px;overflow-y:auto" id="lstMarcaVeic"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MARCA PRODUTO -->
+      <div class="page" id="pg-marca-prod">
+        <div style="max-width:700px;margin:0 auto">
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+            <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+              <h3 style="font-size:13px;font-weight:600;color:#111">&#127991; Marcas de Produtos</h3>
+              <small id="cntMarcaProd" style="font-size:11px;color:#6b7280">0 cadastradas</small>
+            </div>
+            <div style="padding:14px 16px">
+              <div style="display:flex;gap:6px;margin-bottom:12px">
+                <input type="text" id="inMarcaProd" placeholder="Ex: BOSCH, DELPHI, DENSO..." onkeydown="if(event.key==='Enter')addMarcaProdPg()" style="flex:1;height:34px;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none"/>
+                <button onclick="addMarcaProdPg()" style="height:34px;padding:0 14px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:18px;cursor:pointer">+</button>
+              </div>
+              <div style="max-height:300px;overflow-y:auto" id="lstMarcaProd"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COLABORADORES -->
+      <div class="page" id="pg-colaboradores">
+        <div style="max-width:900px;margin:0 auto">
+          <div style="background:#fff;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+            <div style="background:#f9fafb;border-bottom:1px solid #e5e7eb;padding:12px 16px;display:flex;align-items:center;justify-content:space-between">
+              <h3 style="font-size:13px;font-weight:600;color:#111">&#128100; Colaboradores / Usuários</h3>
+              <small id="cntColab" style="font-size:11px;color:#6b7280">0 cadastrados</small>
+            </div>
+            <div style="padding:16px">
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:8px;align-items:end;margin-bottom:12px">
+                <div><label style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Nome completo</label><input type="text" id="colabNome" placeholder="Nome do colaborador" style="height:36px;width:100%;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;font-family:inherit"/></div>
+                <div><label style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Login</label><input type="text" id="colabLogin" placeholder="Login de acesso" style="height:36px;width:100%;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;font-family:inherit"/></div>
+                <div><label style="font-size:11px;color:#6b7280;display:block;margin-bottom:3px">Senha</label><input type="password" id="colabSenha" placeholder="Senha" style="height:36px;width:100%;border:1px solid #e5e7eb;border-radius:7px;padding:0 10px;font-size:13px;outline:none;font-family:inherit"/></div>
+                <div style="display:flex;gap:6px;align-items:flex-end">
+                  <select id="colabRole" style="height:36px;border:1px solid #e5e7eb;border-radius:7px;padding:0 8px;font-size:13px;outline:none"><option>Operador</option><option>Gerente</option><option>Admin</option><option>Vendedor</option></select>
+                  <button onclick="addColab()" style="height:36px;padding:0 16px;background:#2563eb;color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:500;cursor:pointer">Criar</button>
+                </div>
+              </div>
+              <div style="overflow-x:auto">
+                <table style="width:100%;border-collapse:collapse;font-size:13px">
+                  <thead><tr>
+                    <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;border-bottom:1px solid #e5e7eb;background:#f9fafb">NOME</th>
+                    <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;border-bottom:1px solid #e5e7eb;background:#f9fafb">LOGIN</th>
+                    <th style="padding:8px 12px;text-align:left;font-size:11px;font-weight:600;color:#6b7280;border-bottom:1px solid #e5e7eb;background:#f9fafb">PERFIL</th>
+                    <th style="padding:8px 12px;text-align:center;font-size:11px;font-weight:600;color:#6b7280;border-bottom:1px solid #e5e7eb;background:#f9fafb">STATUS</th>
+                    <th style="padding:8px 12px;text-align:center;font-size:11px;font-weight:600;color:#6b7280;border-bottom:1px solid #e5e7eb;background:#f9fafb">AÇÕES</th>
+                  </tr></thead>
+                  <tbody id="lstColab"></tbody>
+                </table>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -810,18 +1050,26 @@ function salvar() {
   } catch(e) {}
 }
 function carregar() {
-  try {
-    var p=localStorage.getItem('sf_prod'); if(p) produtos=JSON.parse(p);
-    var ct=localStorage.getItem('sf_cont'); if(ct) Object.assign(contadores,JSON.parse(ct));
-    var i=localStorage.getItem('sf_proxId'); if(i) proxId=parseInt(i);
-    var f=localStorage.getItem('sf_fam'); if(f) familias=JSON.parse(f);
-    var s=localStorage.getItem('sf_sub'); if(s) subfamilias=JSON.parse(s);
-    var mv=localStorage.getItem('sf_mv'); if(mv) marcasVeic=JSON.parse(mv);
-    var mpm=localStorage.getItem('sf_mpm'); if(mpm) modelosPorMarca=JSON.parse(mpm);
-    var mp=localStorage.getItem('sf_mp'); if(mp) marcasProd=JSON.parse(mp);
-    var u=localStorage.getItem('sf_us');
-    if(u){var pu=JSON.parse(u);if(pu&&pu.length>0) usuarios=pu;}
-  } catch(e) {}
+  var keys={
+    sf_prod:function(v){produtos=JSON.parse(v);},
+    sf_cont:function(v){Object.assign(contadores,JSON.parse(v));},
+    sf_proxId:function(v){proxId=parseInt(v);},
+    sf_fam:function(v){var p=JSON.parse(v);if(Array.isArray(p))familias=p;},
+    sf_sub:function(v){var p=JSON.parse(v);if(Array.isArray(p))subfamilias=p;},
+    sf_mv:function(v){var p=JSON.parse(v);if(Array.isArray(p))marcasVeic=p;},
+    sf_mpm:function(v){var p=JSON.parse(v);if(p&&typeof p==='object')modelosPorMarca=p;},
+    sf_mp:function(v){var p=JSON.parse(v);if(Array.isArray(p))marcasProd=p;},
+    sf_us:function(v){var p=JSON.parse(v);if(Array.isArray(p)&&p.length>0)usuarios=p;}
+  };
+  Object.keys(keys).forEach(function(k){
+    try{
+      var val=localStorage.getItem(k);
+      if(val) keys[k](val);
+    }catch(e){
+      console.log('Erro ao carregar '+k+':',e);
+      localStorage.removeItem(k); // remover chave corrompida
+    }
+  });
 }
 
 // ===== LOGIN =====
@@ -850,7 +1098,7 @@ function iniciarApp(u){
   buscar();
   renderRom();
   // Restaurar página anterior
-  var pag=localStorage.getItem('sf_pagina')||'lista';
+  var pag=localStorage.getItem('sf_pagina')||'dashboard';
   nav(pag);
   setTimeout(verificarUpdAuto, 2000);
 }
@@ -891,20 +1139,57 @@ function doModal() {
 function nav(p) {
   document.querySelectorAll('.page').forEach(function(x){x.classList.remove('active');});
   document.querySelectorAll('.si').forEach(function(x){x.classList.remove('active');});
-  var mp={produto:'pg-produto',lista:'pg-lista',entrega:'pg-entrega',wip:'pg-wip',cadastros:'pg-cadastros',ficha:'pg-ficha','receb-novo':'pg-receb-novo','receb-hist':'pg-receb-hist','receb-dash':'pg-receb-dash'};
-  var mm={produto:'mn-produto',lista:'mn-lista',entrega:'mn-entrega',cadastros:'mn-cadastros','receb-novo':'mn-receb-novo','receb-hist':'mn-receb-hist','receb-dash':'mn-receb-dash'};
-  var mb={produto:'Cadastros / <span>Cadastro de Produtos</span>',lista:'Cadastros / <span>Produtos</span>',entrega:'Estoque / <span>Romaneio Entrega</span>',cadastros:'<span>Cadastros</span>',ficha:'Cadastros / Produtos / <span>Ficha Tecnica</span>','receb-novo':'Recebimentos / <span>Lancar Novo</span>','receb-hist':'Recebimentos / <span>Entradas</span>','receb-dash':'Recebimentos / <span>Dashboard</span>',wip:'Em desenvolvimento'};
+  var mp={
+    dashboard:'pg-dashboard',produto:'pg-produto',lista:'pg-lista',
+    entrega:'pg-entrega',wip:'pg-wip',cadastros:'pg-cadastros',ficha:'pg-ficha',
+    'receb-novo':'pg-receb-novo','receb-hist':'pg-receb-hist','receb-dash':'pg-receb-dash',
+    'fam-prod':'pg-fam-prod','marca-veic':'pg-marca-veic','marca-prod':'pg-marca-prod',
+    'colaboradores':'pg-colaboradores'
+  };
+  var mm={
+    dashboard:'mn-dashboard',produto:'mn-produto',lista:'mn-lista',
+    entrega:'mn-entrega',cadastros:'mn-cadastros',
+    'receb-novo':'mn-receb-novo','receb-hist':'mn-receb-hist','receb-dash':'mn-receb-dash',
+    'fam-prod':'mn-famProd','marca-veic':'mn-marcaVeic','marca-prod':'mn-marcaProd',
+    'colaboradores':'mn-colab'
+  };
+  var mb={
+    dashboard:'Minha Área / <span>Dashboard</span>',
+    produto:'Área de Cadastro / Produtos / <span>Cadastro de Produtos</span>',
+    lista:'Estoque / <span>Consultar Produtos</span>',
+    entrega:'Estoque / <span>Romaneio Entrega</span>',
+    cadastros:'Área de Cadastro / Tabelas de Apoio / <span>Geral</span>',
+    ficha:'Área de Cadastro / Produtos / <span>Ficha Técnica</span>',
+    'receb-novo':'Estoque / Recebimentos / <span>Lançar Novo</span>',
+    'receb-hist':'Estoque / Recebimentos / <span>Entradas</span>',
+    'receb-dash':'Estoque / Recebimentos / <span>Dashboard</span>',
+    'fam-prod':'Área de Cadastro / Tabelas de Apoio / <span>Família Produto</span>',
+    'marca-veic':'Área de Cadastro / Tabelas de Apoio / <span>Marcas de Veículos</span>',
+    'marca-prod':'Área de Cadastro / Tabelas de Apoio / <span>Marcas de Produtos</span>',
+    'colaboradores':'Área de Cadastro / Tabelas de Apoio / <span>Colaboradores</span>',
+    wip:'Em desenvolvimento'
+  };
   var pg=document.getElementById(mp[p]||'pg-wip');
   if(pg) pg.classList.add('active');
   var mn=mm[p]?document.getElementById(mm[p]):null;
   if(mn) mn.classList.add('active');
   document.getElementById('breadcrumb').innerHTML=mb[p]||p;
   if(p==='produto') atualizarSelects();
-  localStorage.setItem('sf_pagina',p);
+  if(p==='lista'){atualizarSelects();buscar();}
+  if(p==='cadastros'){renderCads();renderUsers();}
   if(p==='receb-hist') renderHist();
   if(p==='receb-dash') renderDash();
-  if(p==='cadastros'){renderCads();renderUsers();}
-  if(p==='lista'){atualizarSelects();buscar();}
+  if(p==='dashboard') renderDashHome();
+  // abrir grupos do menu automaticamente
+  if(p==='produto'||p==='lista'||p==='ficha'){abrirGrupo('prodGrupo','arrProd');}
+  if(p==='cadastros'){abrirGrupo('cadsGrupo','arrCads');}
+  if(p==='receb-novo'||p==='receb-hist'||p==='receb-dash'){abrirGrupo('recebGrupo','arrReceb');}
+  if(p==='fam-prod'||p==='marca-veic'||p==='marca-prod'||p==='colaboradores'){abrirGrupo('cadsGrupo','arrCads');}
+  if(p==='fam-prod') renderFamProd();
+  if(p==='marca-veic') renderMarcaVeic();
+  if(p==='marca-prod') renderMarcaProd();
+  if(p==='colaboradores') renderColab();
+  localStorage.setItem('sf_pagina',p);
 }
 
 // ===== ANOS =====
@@ -1522,6 +1807,7 @@ function lancarReceb(){
     recPor:document.getElementById('rRecPor').value,
     tipo:document.getElementById('rTipo').value,
     tipoEnt:document.getElementById('rTipoEnt').value,
+    comNF:(document.getElementById('rComNF')||{}).value||'Sim',
     valor:parseFloat(document.getElementById('rValor').value)||0,
     status:document.getElementById('rStatus').value,
     obs:document.getElementById('rObs').value
@@ -1570,6 +1856,7 @@ function lancarReceb(){
   document.getElementById('rMes').value='';
   document.getElementById('rTipo').value='ESTOQUE';
   document.getElementById('rTipoEnt').value='';
+  var cnf=document.getElementById('rComNF');if(cnf)cnf.value='Sim';
   toast('Recebimento lancado com sucesso!');
 }
 
@@ -1643,6 +1930,7 @@ function renderHist(){
       '<td style="text-align:center">'+fmtData(r.dtRec)+'</td>'+
       '<td style="font-weight:600">'+( r.forn||'-')+'</td>'+
       '<td style="text-align:center">'+( r.nf||'-')+'</td>'+
+      '<td style="text-align:center"><span style="font-size:11px;padding:2px 8px;border-radius:99px;font-weight:600;background:'+(r.comNF==='Não'?'#fee2e2':'#dcfce7')+';color:'+(r.comNF==='Não'?'#dc2626':'#16a34a')+'">'+(r.comNF||'Sim')+'</span></td>'+
       '<td style="text-align:center">'+( r.vol||0)+'</td>'+
       '<td style="text-align:center">'+( r.recPor||'-')+'</td>'+
       '<td style="text-align:center">'+( r.tipoRec||r.tipo||'-')+'</td>'+
@@ -1699,7 +1987,7 @@ function renderDash(){
   var cVenda=lista.filter(function(r){return (r.tipoEnt||'').toUpperCase()==='VENDA';}).length;
   var cEst=lista.filter(function(r){return (r.tipoEnt||'').toUpperCase()==='ESTETICA';}).length;
   var cCons=lista.filter(function(r){return (r.tipoEnt||'').toUpperCase()==='CONSUMO';}).length;
-  var cSemNF=lista.filter(function(r){return !r.nf||r.nf===''||r.nf==='None';}).length;
+  var cSemNF=lista.filter(function(r){return r.comNF==='Não'||(!r.nf||r.nf===''||r.nf==='None');}).length;
   var el=function(id){return document.getElementById(id);};
   if(el('dDiv')) el('dDiv').textContent=divs;
   if(el('dNF')) el('dNF').textContent=lista.length;
@@ -1846,6 +2134,219 @@ function importarExcel(event){
   event.target.value='';
 }
 
+// ===== FAMÍLIA PRODUTO =====
+function addFamProd(){
+  var v=document.getElementById('inFamProd').value.trim();
+  if(!v||familias.indexOf(v)>=0){document.getElementById('inFamProd').value='';return;}
+  familias.push(v);
+  document.getElementById('inFamProd').value='';
+  atualizarSubFamPaiProd();
+  renderFamProd();atualizarSelects();salvar();
+}
+
+function addSubFamProd(){
+  var pai=document.getElementById('subFamPaiProd').value;
+  var v=document.getElementById('inSubFamProd').value.trim();
+  if(!v||!pai){alert('Selecione a família pai.');return;}
+  subfamilias.push({pai:pai,nome:v});
+  document.getElementById('inSubFamProd').value='';
+  renderFamProd();salvar();
+}
+
+function atualizarSubFamPaiProd(){
+  var sel=document.getElementById('subFamPaiProd');
+  if(!sel)return;
+  sel.innerHTML='<option value="">Adicionar subfamília → selecione a família pai...</option>'+
+    familias.map(function(f){return '<option>'+f+'</option>';}).join('');
+}
+
+function renderFamProd(){
+  atualizarSubFamPaiProd();
+  var el=document.getElementById('lstFamProd');
+  if(!el)return;
+  document.getElementById('cntFamProd').textContent=familias.length+' cadastradas';
+  el.innerHTML=familias.map(function(f,i){
+    var subs=subfamilias.filter(function(s){return s.pai===f;});
+    return '<div style="padding:8px 10px;border-bottom:1px solid #f3f4f6;font-size:13px">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between">'+
+        '<span style="font-weight:500">&#128193; '+f+'</span>'+
+        '<button onclick="rmFam('+i+')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:15px">&#215;</button>'+
+      '</div>'+
+      (subs.length?'<div style="padding:4px 0 0 16px">'+subs.map(function(s,si){
+        var idx=subfamilias.findIndex(function(x){return x.pai===s.pai&&x.nome===s.nome;});
+        return '<div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;color:#6b7280;padding:2px 0">'+
+          '<span>&#8627; '+s.nome+'</span>'+
+          '<button onclick="rmSub('+idx+')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:13px">&#215;</button>'+
+        '</div>';
+      }).join('')+'</div>':'')
+    +'</div>';
+  }).join('')||'<div style="padding:20px;text-align:center;color:#9ca3af;font-size:13px">Nenhuma família cadastrada</div>';
+}
+
+function rmFam(i){familias.splice(i,1);renderFamProd();renderCads();atualizarSelects();salvar();}
+function rmSub(i){subfamilias.splice(i,1);renderFamProd();renderCads();salvar();}
+
+// ===== MARCA VEÍCULO PAGE =====
+function addMarcaVeicPg(){
+  var v=document.getElementById('inMarcaVeic').value.trim().toUpperCase();
+  if(!v||marcasVeic.indexOf(v)>=0){document.getElementById('inMarcaVeic').value='';return;}
+  marcasVeic.push(v);
+  if(!modelosPorMarca[v]) modelosPorMarca[v]=[];
+  document.getElementById('inMarcaVeic').value='';
+  renderMarcaVeic();atualizarSelects();salvar();
+}
+
+function renderModelosInput(){
+  // só atualiza UI
+}
+
+function addModeloVeicPg(){
+  var marca=document.getElementById('marcaVeicParent').value;
+  var mod=document.getElementById('inModeloVeic').value.trim().toUpperCase();
+  if(!marca||!mod){alert('Selecione a marca e digite o modelo.');return;}
+  if(!modelosPorMarca[marca]) modelosPorMarca[marca]=[];
+  if(modelosPorMarca[marca].indexOf(mod)<0) modelosPorMarca[marca].push(mod);
+  document.getElementById('inModeloVeic').value='';
+  renderMarcaVeic();salvar();
+}
+
+function renderMarcaVeic(){
+  var sel=document.getElementById('marcaVeicParent');
+  if(sel) sel.innerHTML='<option value="">Adicionar modelo → selecione a marca...</option>'+
+    marcasVeic.map(function(m){return '<option>'+m+'</option>';}).join('');
+  var el=document.getElementById('lstMarcaVeic');
+  if(!el)return;
+  document.getElementById('cntMarcaVeic').textContent=marcasVeic.length+' cadastradas';
+  el.innerHTML=marcasVeic.map(function(m,i){
+    var mods=modelosPorMarca[m]||[];
+    var modsHtml='';
+    if(mods.length){
+      modsHtml='<div style="font-size:11px;color:#6b7280;margin-top:4px;padding-left:8px">';
+      for(var mi=0;mi<mods.length;mi++){
+        modsHtml+='<span style="display:inline-flex;align-items:center;gap:3px;background:#f3f4f6;border-radius:99px;padding:2px 8px;margin:2px">'+mods[mi]+
+          '<button onclick="rmModelo(this,'+i+','+mi+')" style="background:none;border:none;color:#9ca3af;cursor:pointer;font-size:12px;line-height:1;padding:0 0 0 2px">&#215;</button></span>';
+      }
+      modsHtml+='</div>';
+    }
+    return '<div style="padding:8px 10px;border-bottom:1px solid #f3f4f6;font-size:13px">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between">'+
+        '<span style="font-weight:500">&#128663; '+m+'</span>'+
+        '<button onclick="rmMarcaVeic('+i+')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:15px">&#215;</button>'+
+      '</div>'+modsHtml+'</div>';
+  }).join('')||'<div style="padding:20px;text-align:center;color:#9ca3af;font-size:13px">Nenhuma marca cadastrada</div>';
+}
+function rmMarcaVeic(i){marcasVeic.splice(i,1);renderMarcaVeic();renderCads();atualizarSelects();salvar();}
+function rmModelo(btn,marcaIdx,modeloIdx){
+  var marca=marcasVeic[marcaIdx];
+  if(marca&&modelosPorMarca[marca]) modelosPorMarca[marca].splice(modeloIdx,1);
+  renderMarcaVeic();salvar();
+}
+
+// ===== MARCA PRODUTO PAGE =====
+function addMarcaProdPg(){
+  var v=document.getElementById('inMarcaProd').value.trim().toUpperCase();
+  if(!v||marcasProd.indexOf(v)>=0){document.getElementById('inMarcaProd').value='';return;}
+  marcasProd.push(v);
+  document.getElementById('inMarcaProd').value='';
+  renderMarcaProd();atualizarSelects();salvar();
+}
+
+function renderMarcaProd(){
+  var el=document.getElementById('lstMarcaProd');
+  if(!el)return;
+  document.getElementById('cntMarcaProd').textContent=marcasProd.length+' cadastradas';
+  el.innerHTML=marcasProd.map(function(m,i){
+    return '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid #f3f4f6;font-size:13px">'+
+      '<span>&#127991; '+m+'</span>'+
+      '<button onclick="rmMarcaProd('+i+')" style="background:none;border:none;color:#d1d5db;cursor:pointer;font-size:15px">&#215;</button>'+
+    '</div>';
+  }).join('')||'<div style="padding:20px;text-align:center;color:#9ca3af;font-size:13px">Nenhuma marca cadastrada</div>';
+}
+
+function rmMarcaProd(i){marcasProd.splice(i,1);renderMarcaProd();renderCads();atualizarSelects();salvar();}
+
+// ===== COLABORADORES =====
+function addColab(){
+  var nome=document.getElementById('colabNome').value.trim();
+  var login=document.getElementById('colabLogin').value.trim();
+  var senha=document.getElementById('colabSenha').value.trim();
+  var role=document.getElementById('colabRole').value;
+  if(!nome||!login||!senha){alert('Preencha nome, login e senha.');return;}
+  for(var i=0;i<usuarios.length;i++){if(usuarios[i].login===login){alert('Login já existe.');return;}}
+  usuarios.push({nome:nome,login:login,senha:senha,role:role,ativo:true});
+  document.getElementById('colabNome').value='';
+  document.getElementById('colabLogin').value='';
+  document.getElementById('colabSenha').value='';
+  renderColab();salvar();
+  toast('Colaborador "'+nome+'" criado!');
+}
+
+function renderColab(){
+  var el=document.getElementById('lstColab');
+  if(!el)return;
+  document.getElementById('cntColab').textContent=usuarios.length+' cadastrados';
+  el.innerHTML=usuarios.map(function(u,i){
+    return '<tr style="'+(i%2===0?'':'background:#f9fafb')+'">'+
+      '<td style="padding:10px 12px;font-weight:500">'+u.nome+'</td>'+
+      '<td style="padding:10px 12px;color:#6b7280">'+u.login+'</td>'+
+      '<td style="padding:10px 12px"><span style="background:#eff6ff;color:#2563eb;font-size:11px;padding:2px 8px;border-radius:99px">'+u.role+'</span></td>'+
+      '<td style="padding:10px 12px;text-align:center"><span style="background:'+(u.ativo!==false?'#f0fdf4':'#fef2f2')+';color:'+(u.ativo!==false?'#16a34a':'#dc2626')+';font-size:11px;padding:2px 8px;border-radius:99px">'+(u.ativo!==false?'Ativo':'Inativo')+'</span></td>'+
+      '<td style="padding:10px 12px;text-align:center">'+
+        (i>0?'<button onclick="toggleColab('+i+')" style="padding:3px 10px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:5px;font-size:12px;cursor:pointer">'+(u.ativo!==false?'Inativar':'Ativar')+'</button>':'<span style="color:#9ca3af;font-size:12px">Admin</span>')+
+      '</td>'+
+    '</tr>';
+  }).join('');
+}
+
+function toggleColab(i){
+  if(i===0)return;
+  usuarios[i].ativo=!usuarios[i].ativo;
+  renderColab();salvar();
+}
+
+// ===== MENU GRUPOS =====
+function toggleGrupo(id){
+  var el=document.getElementById(id);
+  if(!el)return;
+  var arrId={prodGrupo:'arrProd',cadsGrupo:'arrCads',recebGrupo:'arrReceb'}[id];
+  var arr=arrId?document.getElementById(arrId):null;
+  var open=el.style.display!=='none'&&el.style.display!=='';
+  el.style.display=open?'none':'block';
+  if(arr) arr.innerHTML=open?'&#9660;':'&#9650;';
+}
+function abrirGrupo(id,arrId){
+  var el=document.getElementById(id);
+  if(el) el.style.display='block';
+  var arr=arrId?document.getElementById(arrId):null;
+  if(arr) arr.innerHTML='&#9650;';
+}
+
+// ===== DASHBOARD HOME =====
+function renderDashHome(){
+  var mesAtual=new Date().toLocaleString('pt-BR',{month:'long'}).toLowerCase();
+  var recebMes=recebimentos.filter(function(r){return r.mes===mesAtual;});
+  var nf=recebMes.length;
+  var vol=recebMes.reduce(function(a,r){return a+(parseInt(r.vol)||0);},0);
+  var div=recebimentos.filter(function(r){return r.status&&r.status.toUpperCase().indexOf('DIV')>=0;}).length;
+  var el=function(id){return document.getElementById(id);};
+  if(el('dashNF')) el('dashNF').textContent=nf;
+  if(el('dashVol')) el('dashVol').textContent=vol;
+  if(el('dashProd')) el('dashProd').textContent=produtos.length;
+  if(el('dashDiv')) el('dashDiv').textContent=div;
+}
+
+// ===== RESET EMERGÊNCIA =====
+function resetEmergencia(){
+  if(confirm('Isso vai limpar o cache do sistema e recarregar. Seus dados cadastrados no servidor não serão perdidos. Continuar?')){
+    try{
+      // Limpar apenas chaves do sistema, não tudo
+      var chaves=['sf_prod','sf_cont','sf_proxId','sf_fam','sf_sub','sf_mv','sf_mpm','sf_mp','sf_us','sf_receb','sf_receb_ver','sf_session','sf_pagina'];
+      chaves.forEach(function(k){localStorage.removeItem(k);});
+    }catch(e){}
+    window.location.reload();
+  }
+}
+
 // ===== ATUALIZAÇÕES =====
 var VERSAO_ATUAL = '2026.06.27.1';
 var GITHUB_URL = 'https://raw.githubusercontent.com/fsdsilva/nexustech/main/version.json';
@@ -1926,26 +2427,41 @@ function verificarUpdAuto(){
 }
 
 // ===== INIT =====
-carregar();
-iniciarRecebimentos();
+try {
+  carregar();
+} catch(e) {
+  console.log('Erro ao carregar dados:', e);
+}
+try {
+  iniciarRecebimentos();
+} catch(e) {
+  console.log('Erro ao iniciar recebimentos:', e);
+}
+
 document.addEventListener('click',function(e){
   if(!e.target.closest('.dd-wrap')){
     document.querySelectorAll('.dd-menu.open').forEach(function(m){m.classList.remove('open');});
   }
 });
+
 // Auto-login se tiver sessão salva
 (function(){
-  var sess=localStorage.getItem('sf_session');
-  if(sess){
-    try{
+  try {
+    var sess=localStorage.getItem('sf_session');
+    if(sess){
       var s=JSON.parse(sess);
       var u=null;
-      for(var i=0;i<usuarios.length;i++){if(usuarios[i].login===s.login&&usuarios[i].senha===s.senha){u=usuarios[i];break;}}
+      for(var i=0;i<usuarios.length;i++){
+        if(usuarios[i].login===s.login&&usuarios[i].senha===s.senha){u=usuarios[i];break;}
+      }
       if(u){usuAtual=u;iniciarApp(u);return;}
-    }catch(e){}
+    }
+  } catch(e) {
+    console.log('Erro no auto-login:', e);
   }
-  // sem sessão - mostrar login
-  document.getElementById('pgLogin').style.display='flex';
+  // sem sessão - mostrar tela de login
+  var pgLogin = document.getElementById('pgLogin');
+  if(pgLogin) pgLogin.style.display='flex';
 })();
 </script>
 </body>
